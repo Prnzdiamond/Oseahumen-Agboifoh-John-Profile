@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.BACKEND_URL || 'http://localhost:8000/api',
+      apiBaseUrl: process.env.BACKEND_URL || 'hhttps://oseahumen-agboifoh-john.onrender.com/api',
     }
   }
 })
