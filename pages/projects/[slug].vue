@@ -17,10 +17,11 @@
         <!-- Hero Section -->
         <section class="relative h-96 overflow-hidden">
           <img 
-            :src="projectStore.project.cover_image" 
-            :alt="projectStore.project.title"
-            class="w-full h-full object-cover"
-          >
+  :src="heroImage" 
+  :alt="projectStore.project?.title || 'Project'"
+  class="w-full h-full object-cover"
+  @error="$event.target.src = '/images/default_pro_cover.png'"
+>
           <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
           
           <!-- Project Title Overlay -->
@@ -88,11 +89,12 @@
                     <!-- Main Image Display -->
                     <div class="relative h-96 overflow-hidden group">
                       <img 
-                        :src="currentImage" 
-                        :alt="projectStore.project.title"
-                        class="w-full h-full object-cover transition-all duration-500 cursor-pointer"
-                        @click="openLightbox"
-                      >
+                          :src="currentImage" 
+                          :alt="projectStore.project?.title || 'Project'"
+                          class="w-full h-full object-cover transition-all duration-500 cursor-pointer"
+                          @click="openLightbox"
+                          @error="$event.target.src = '/images/default_pro_img.png'"
+                        >
                       
                       <!-- Navigation Arrows - Only show on hover -->
                       <button 
@@ -141,11 +143,12 @@
                           :class="{ 'ring-4 ring-blue-500': currentImageIndex === index }"
                           class="relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden hover:scale-105 transition-all duration-200 focus:outline-none"
                         >
-                          <img 
-                            :src="image" 
-                            :alt="`${projectStore.project.title} - Image ${index + 1}`"
-                            class="w-full h-full object-cover"
-                          >
+                        <img 
+                          :src="image" 
+                          :alt="`${projectStore.project?.title || 'Project'} - Image ${index + 1}`"
+                          class="w-full h-full object-cover"
+                          @error="$event.target.src = '/images/default_pro_img.png'"
+                        >
                           <div class="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors duration-200"
                                :class="{ 'bg-blue-500/20': currentImageIndex === index }"></div>
                         </button>
@@ -233,11 +236,11 @@
     <div class="relative max-w-full max-h-full flex items-center justify-center">
       <img 
         :src="currentImage" 
-        :alt="`${projectStore.project.title} - Image ${currentImageIndex + 1}`"
+        :alt="`${projectStore.project?.title || 'Project'} - Image ${currentImageIndex + 1}`"
         class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transition-opacity duration-300"
         style="max-width: calc(100vw - 8rem); max-height: calc(100vh - 12rem);"
         @load="imageLoaded = true"
-        @error="imageError = true"
+        @error="$event.target.src = '/images/default_pro_img.png'; imageError = true"
       >
       
       <!-- Loading indicator -->
@@ -480,17 +483,40 @@
   const lightboxOpen = ref(false)
   
   const allImages = computed(() => {
-    if (!projectStore.project) return []
-    const images = [projectStore.project.main_image]
-    if (projectStore.project.images?.length) {
-      images.push(...projectStore.project.images)
-    }
-    return images.filter(Boolean)
-  })
+  return galleryImages.value
+})
   
-  const currentImage = computed(() => {
-    return allImages.value[currentImageIndex.value] || projectStore.project?.main_image
-  })
+const currentImage = computed(() => {
+  return allImages.value[currentImageIndex.value] || '/images/default_pro_img.png'
+})
+
+  const heroImage = computed(() => {
+  return projectStore.project?.cover_image || '/images/default_pro_cover.png'
+})
+
+const mainImage = computed(() => {
+  return projectStore.project?.main_image || '/images/default_pro_img.png'
+})
+
+const galleryImages = computed(() => {
+  if (!projectStore.project) return ['/images/default_pro_img.png']
+  
+  const images = []
+  if (projectStore.project.main_image) {
+    images.push(projectStore.project.main_image)
+  } else {
+    images.push('/images/default_pro_img.png')
+  }
+  
+  if (projectStore.project.images?.length) {
+    images.push(...projectStore.project.images)
+  } else {
+    // Add some default images if no gallery images
+    images.push('/images/default_pro_images.png')
+  }
+  
+  return images
+})
   
   const setCurrentImage = (index) => {
     currentImageIndex.value = index

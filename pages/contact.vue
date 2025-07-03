@@ -46,6 +46,7 @@
                 v-model="form.name" 
                 type="text" 
                 required
+                autocomplete="name"
                 :disabled="loading"
                 class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Enter your full name"
@@ -62,7 +63,8 @@
               <div class="relative">
                 <input 
                 id="email"
-                v-model="form.email" 
+                v-model="form.email"
+                autocomplete="email" 
                 type="email" 
                 required
                 :disabled="loading"

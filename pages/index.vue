@@ -179,14 +179,17 @@
                             dark:from-gray-700 dark:to-gray-600 animate-pulse"></div>
                 
                 <!-- Avatar -->
-                <div v-else-if="ownerStore.owner?.avatar" class="relative w-full h-full group">
-                  <img 
-                    :src="ownerStore.owner.avatar" 
-                    :alt="ownerStore.owner.name"
-                    class="w-full h-full rounded-full object-cover shadow-2xl border-4 border-white 
-                       dark:border-gray-800 group-hover:scale-105 transition-transform duration-500
-                       animate-zoom-in"
-                  >
+                <!-- Avatar -->
+<div v-else-if="ownerStore.owner?.avatar || !ownerStore.loading" class="relative w-full h-full group">
+  <img 
+  :src="ownerStore.owner?.avatar || '/images/default_avatar.png'" 
+  :alt="ownerStore.owner?.name || 'Developer'"
+  @error="handleImageError($event, '/images/default_avatar.png')"
+  @load="handleImageLoad"
+  class="w-full h-full rounded-full object-cover shadow-2xl border-4 border-white 
+     dark:border-gray-800 group-hover:scale-105 transition-transform duration-500
+     animate-zoom-in opacity-0 transition-opacity duration-300"
+>
                   <!-- Multiple Animated Rings -->
                   <div class="absolute inset-0 rounded-full border-4 border-blue-500/30 animate-ping"></div>
                   <div class="absolute inset-0 rounded-full border-4 border-cyan-500/20 animate-ping animation-delay-1000"></div>
@@ -299,12 +302,14 @@
                      border border-gray-100 dark:border-gray-700 animate-fade-in-up"
             >
               <!-- Project Image -->
-              <div class="relative h-48 overflow-hidden">
-                <img 
-                  :src="project.cover_image" 
-                  :alt="project.title"
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                >
+              <!-- Project Image -->
+<div class="relative h-48 overflow-hidden">
+  <img 
+    :src="project.cover_image || '/images/default_pro_cover.png'" 
+    :alt="project.title"
+    @error="$event.target.src = '/images/default_pro_cover.png'"
+    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+  >
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent 
                            opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
@@ -467,6 +472,11 @@
   const featuredProjects = computed(() => {
     return projectStore.projects?.slice(0, 3) || []
   })
+
+  // Image fallback helper
+const getImageWithFallback = (imageSrc, fallbackSrc) => {
+  return imageSrc || fallbackSrc
+}
   
   // State for Typewriter Effect
   const displayedHeadline = ref('')
@@ -524,6 +534,14 @@
     
     return icons[techName] || '⚡' // Default icon for unknown technologies
   }
+
+  const handleImageLoad = (event) => {
+  event.target.classList.add('loaded')
+}
+
+const handleImageError = (event, fallbackSrc) => {
+  event.target.src = fallbackSrc
+}
   
   // Typewriter effect
   onMounted(async () => {
@@ -857,5 +875,9 @@
   .dark .cursor {
     background-color: #d1d5db; /* gray-300 */
   }
+
+  img.loaded {
+  opacity: 1;
+}
   </style>
   

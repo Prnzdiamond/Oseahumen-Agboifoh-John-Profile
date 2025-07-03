@@ -70,7 +70,9 @@
           <!-- Loading State -->
           <div v-if="projectStore.loading" :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
             <div v-for="i in 6" :key="i" class="animate-pulse">
-              <div v-if="viewMode === 'grid'" class="bg-gray-200 dark:bg-gray-700 h-64 rounded-xl mb-4"></div>
+              <div v-if="viewMode === 'grid'" class="bg-gray-200 dark:bg-gray-700 h-64 rounded-xl mb-4 flex items-center justify-center">
+  <img src="/images/default_pro_img.png" alt="Loading..." class="w-16 h-16 opacity-50">
+</div>
               <div v-else class="flex space-x-4">
                 <div class="bg-gray-200 dark:bg-gray-700 w-48 h-32 rounded-xl"></div>
                 <div class="flex-1 space-y-2">
@@ -96,10 +98,11 @@
                 <!-- Project Image -->
                 <div class="relative h-48 overflow-hidden">
                   <img 
-                    :src="project.cover_image" 
-                    :alt="project.title"
-                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  >
+  :src="project.cover_image || '/images/default_pro_cover.png'" 
+  :alt="project.title"
+  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+  @error="$event.target.src = '/images/default_pro_cover.png'"
+>
                   <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
                   <!-- Overlay Buttons -->
@@ -172,10 +175,11 @@
                   <!-- Project Image -->
                   <div class="md:w-48 h-48 md:h-32 relative overflow-hidden">
                     <img 
-                      :src="project.cover_image" 
-                      :alt="project.title"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    >
+  :src="project.cover_image || '/images/default_pro_cover.png'" 
+  :alt="project.title"
+  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+  @error="$event.target.src = '/images/default_pro_cover.png'"
+>
                   </div>
                   
                   <!-- Project Content -->
