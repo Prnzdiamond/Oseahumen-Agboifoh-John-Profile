@@ -25,9 +25,9 @@
               <div class="space-y-6">
                 <!-- Animated Greeting -->
                 <div class="overflow-hidden">
-                  <h1 class="text-5xl lg:text-7xl font-bold leading-tight">
+                  <h1 class="text-3xl lg:text-5xl font-bold leading-tight">
                     <span class="inline-block text-gray-900 dark:text-white animate-slide-in-left">Hi, I'm</span>
-                    <span class="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent animate-gradient-text animate-slide-in-right">
+                    <span class="block  bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent animate-gradient-text animate-slide-in-right">
                       {{ ownerStore.owner.name }}
                     </span>
                   </h1>
@@ -35,18 +35,29 @@
                 
                 <!-- Typewriter Effect Headline -->
                 <div class="h-16 lg:h-20">
-                  <p class="text-2xl lg:text-3xl text-gray-600 dark:text-gray-300 font-light">
-                    <span class="typewriter">{{ displayedHeadline }}</span>
-                    <span class="cursor animate-blink">|</span>
-                  </p>
-                </div>
+                <p class="text-2xl lg:text-3xl text-gray-600 dark:text-gray-300 font-light">
+                  <span class="typewriter">{{ displayedHeadline }}</span>
+                  <span class="cursor animate-blink">|</span>
+                </p>
+              </div>
                 
                 <!-- Animated Bio -->
                 <div class="overflow-hidden">
-                  <p class="text-lg text-gray-700 dark:text-gray-400 max-w-2xl leading-relaxed animate-fade-in-up-delayed">
-                    {{ ownerStore.owner.bio }}
-                  </p>
-                </div>
+                <p class="text-lg text-gray-700 dark:text-gray-400 max-w-2xl leading-relaxed animate-fade-in-up-delayed">
+                  {{ truncatedBio }}
+                  <span v-if="ownerStore.owner.bio && ownerStore.owner.bio.length > 200" class="text-gray-500">...</span>
+                </p>
+                <NuxtLink 
+                  v-if="ownerStore.owner.bio && ownerStore.owner.bio.length > 200"
+                  to="/about"
+                  class="inline-flex items-center mt-3 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors duration-200 group"
+                >
+                  <span>Read more about me</span>
+                  <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                  </svg>
+                </NuxtLink>
+              </div>
               </div>
   
               <!-- Floating Tech Stack Badges with Icons -->
@@ -88,7 +99,7 @@
               </div>
   
               <!-- Enhanced CTA Buttons with More Animations -->
-              <div class="flex flex-col sm:flex-row gap-4 pt-4">
+              <div class="flex flex-col sm:flex-row gap-4 pt-4 mb-5">
                 <NuxtLink 
                   to="/projects"
                   class="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 
@@ -539,6 +550,21 @@ const getImageWithFallback = (imageSrc, fallbackSrc) => {
   event.target.classList.add('loaded')
 }
 
+const truncatedBio = computed(() => {
+  if (!ownerStore.owner?.bio) return ''
+  return ownerStore.owner.bio.length > 200 
+    ? ownerStore.owner.bio.substring(0, 200)
+    : ownerStore.owner.bio
+})
+
+// Truncated headline for typewriter effect
+const truncatedHeadline = computed(() => {
+  if (!ownerStore.owner?.headline) return 'Full-stack Developer'
+  return ownerStore.owner.headline.length > 40 
+    ? ownerStore.owner.headline.substring(0, 40) + '...'
+    : ownerStore.owner.headline
+})
+
 const handleImageError = (event, fallbackSrc) => {
   event.target.src = fallbackSrc
 }
@@ -570,37 +596,37 @@ const handleImageError = (event, fallbackSrc) => {
   })
   
   const startTypewriter = () => {
-    const headline = ownerStore.owner?.headline || 'Full-stack Developer'
-    const typeSpeed = 100
-    const deleteSpeed = 50
-    const pauseTime = 2000
-    
-    const type = () => {
-      if (!isDeleting.value) {
-        if (typewriterIndex.value < headline.length) {
-          displayedHeadline.value = headline.substring(0, typewriterIndex.value + 1)
-          typewriterIndex.value++
-          setTimeout(type, typeSpeed)
-        } else {
-          setTimeout(() => {
-            isDeleting.value = true
-            type()
-          }, pauseTime)
-        }
+  const headline = truncatedHeadline.value
+  const typeSpeed = 100
+  const deleteSpeed = 50
+  const pauseTime = 2000
+  
+  const type = () => {
+    if (!isDeleting.value) {
+      if (typewriterIndex.value < headline.length) {
+        displayedHeadline.value = headline.substring(0, typewriterIndex.value + 1)
+        typewriterIndex.value++
+        setTimeout(type, typeSpeed)
       } else {
-        if (typewriterIndex.value > 0) {
-          displayedHeadline.value = headline.substring(0, typewriterIndex.value - 1)
-          typewriterIndex.value--
-          setTimeout(type, deleteSpeed)
-        } else {
-          isDeleting.value = false
-          setTimeout(type, typeSpeed)
-        }
+        setTimeout(() => {
+          isDeleting.value = true
+          type()
+        }, pauseTime)
+      }
+    } else {
+      if (typewriterIndex.value > 0) {
+        displayedHeadline.value = headline.substring(0, typewriterIndex.value - 1)
+        typewriterIndex.value--
+        setTimeout(type, deleteSpeed)
+      } else {
+        isDeleting.value = false
+        setTimeout(type, typeSpeed)
       }
     }
-    
-    type()
   }
+  
+  type()
+}
   </script>
   
   <style scoped>
@@ -866,6 +892,14 @@ const handleImageError = (event, fallbackSrc) => {
     letter-spacing: .15em;
   }
   
+  /* Mobile responsive typewriter */
+  @media (max-width: 640px) {
+    .typewriter {
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.2;
+    }
+  }
   .cursor {
     display: inline-block;
     width: 3px;
