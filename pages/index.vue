@@ -192,7 +192,7 @@
                 <!-- Avatar -->
                 <!-- Avatar -->
 <div v-else-if="ownerStore.owner?.avatar || !ownerStore.loading" class="relative w-full h-full group">
-  <img 
+  <NuxtImg 
   :src="ownerStore.owner?.avatar || '/images/default_avatar.png'" 
   :alt="ownerStore.owner?.name || 'Developer'"
   @error="handleImageError($event, '/images/default_avatar.png')"
@@ -200,7 +200,7 @@
   class="w-full h-full rounded-full object-cover shadow-2xl border-4 border-white 
      dark:border-gray-800 group-hover:scale-105 transition-transform duration-500
      animate-zoom-in opacity-0 transition-opacity duration-300"
->
+/>
                   <!-- Multiple Animated Rings -->
                   <div class="absolute inset-0 rounded-full border-4 border-blue-500/30 animate-ping"></div>
                   <div class="absolute inset-0 rounded-full border-4 border-cyan-500/20 animate-ping animation-delay-1000"></div>
@@ -315,12 +315,13 @@
               <!-- Project Image -->
               <!-- Project Image -->
 <div class="relative h-48 overflow-hidden">
-  <img 
+  <NuxtImg 
+  ref="avatarImgRef"
     :src="project.cover_image || '/images/default_pro_cover.png'" 
     :alt="project.title"
     @error="$event.target.src = '/images/default_pro_cover.png'"
     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-  >
+  />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent 
                            opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
@@ -546,8 +547,12 @@ const getImageWithFallback = (imageSrc, fallbackSrc) => {
     return icons[techName] || '⚡' // Default icon for unknown technologies
   }
 
-  const handleImageLoad = (event) => {
-  event.target.classList.add('loaded')
+  const avatarImgRef = ref(null)
+
+const handleImageLoad = () => {
+  if (avatarImgRef.value) {
+    avatarImgRef.value.classList.add('loaded')
+  }
 }
 
 const truncatedBio = computed(() => {

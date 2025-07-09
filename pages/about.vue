@@ -11,11 +11,11 @@
       <div class="relative max-w-6xl mx-auto px-6">
         <div v-if="ownerStore.loading" class="text-center animate-pulse">
           <div class="w-40 h-40 mx-auto mb-8 relative">
-            <img 
+            <NuxtImg 
               src="/images/default_avatar.png" 
               alt="Loading..."
               class="w-full h-full rounded-full object-cover opacity-50"
-            >
+            />
           </div>
           <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded-lg mb-4 max-w-md mx-auto"></div>
           <div class="h-6 bg-gray-300 dark:bg-gray-700 rounded mb-2 max-w-lg mx-auto"></div>
@@ -25,9 +25,9 @@
           <!-- Avatar -->
           <div class="relative inline-block mb-8">
             <div class="relative w-40 h-40 mx-auto group">
-              <img :src="ownerStore.owner.avatar || '/images/default_avatar.png'" :alt="ownerStore.owner.name"
+              <NuxtImg :src="ownerStore.owner.avatar || '/images/default_avatar.png'" :alt="ownerStore.owner.name"
                 class="w-full h-full rounded-full object-cover shadow-2xl border-4 border-white dark:border-gray-800 group-hover:scale-105 transition-transform duration-500 animate-zoom-in"
-              >
+              />
               <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-all duration-500"></div>
               <div class="absolute inset-0 rounded-full border-4 border-blue-400/30 animate-ping"></div>
             </div>

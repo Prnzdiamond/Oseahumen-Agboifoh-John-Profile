@@ -13,7 +13,7 @@
           <NuxtLink to="/" class="flex items-center space-x-3 group">
             <div class="relative">
               <div class="w-10 h-10 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/25 overflow-hidden">
-                <img v-if="owner?.avatar && !avatarError" 
+                <NuxtImg v-if="owner?.avatar && !avatarError" 
                      :src="owner.avatar" 
                      :alt="owner.name"
                      @error="avatarError = true"
@@ -87,7 +87,7 @@
         <div class="p-4 sm:p-6 border-b border-blue-100 dark:border-gray-700">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
-              <img v-if="owner?.avatar && !mobileAvatarError" 
+              <NuxtImg v-if="owner?.avatar && !mobileAvatarError" 
                    :src="owner.avatar" 
                    :alt="owner.name"
                    @error="mobileAvatarError = true"
@@ -175,7 +175,7 @@
           <div class="space-y-4">
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
-                <img v-if="owner?.avatar && !footerAvatarError" 
+                <NuxtImg v-if="owner?.avatar && !footerAvatarError" 
                      :src="owner.avatar" 
                      :alt="owner.name"
                      @error="footerAvatarError = true"

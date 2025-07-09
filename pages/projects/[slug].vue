@@ -16,12 +16,12 @@
       
       <!-- Mobile-Optimized Hero Section -->
       <section class="relative h-48 sm:h-64 lg:h-96 overflow-hidden">
-        <img 
+        <NuxtImg 
           :src="heroImage" 
           :alt="projectStore.project?.title || 'Project'"
           class="w-full h-full object-cover"
           @error="$event.target.src = '/images/default_pro_cover.png'"
-        >
+        />
         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
         
         <!-- Mobile-First Project Title Overlay -->
@@ -88,13 +88,13 @@
                 <div class="relative bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-xl border border-blue-100 dark:border-gray-700 overflow-hidden">
                   <!-- Main Image Display -->
                   <div class="relative h-48 sm:h-64 lg:h-80 xl:h-96 overflow-hidden group">
-                    <img 
+                    <NuxtImg 
                       :src="currentImage" 
                       :alt="projectStore.project?.title || 'Project'"
                       class="w-full h-full object-cover transition-all duration-500 cursor-pointer"
                       @click="openLightbox"
                       @error="$event.target.src = '/images/default_pro_img.png'"
-                    >
+                    />
                     
                     <!-- Mobile-Optimized Navigation Arrows -->
                     <button 
@@ -143,12 +143,12 @@
                         :class="{ 'ring-2 ring-blue-500': currentImageIndex === index }"
                         class="relative flex-shrink-0 w-12 h-9 sm:w-16 sm:h-12 lg:w-20 lg:h-16 rounded-md lg:rounded-lg overflow-hidden hover:scale-105 transition-all duration-200 focus:outline-none"
                       >
-                        <img 
+                        <NuxtImg 
                           :src="image" 
                           :alt="`${projectStore.project?.title || 'Project'} - Image ${index + 1}`"
                           class="w-full h-full object-cover"
                           @error="$event.target.src = '/images/default_pro_img.png'"
-                        >
+                        />
                         <div class="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors duration-200"
                              :class="{ 'bg-blue-500/20': currentImageIndex === index }"></div>
                       </button>
@@ -209,13 +209,13 @@
                 <!-- Image Container -->
                 <div class="w-full h-full flex items-center justify-center p-2 sm:p-4" @click.stop>
                   <div class="relative max-w-full max-h-full flex items-center justify-center">
-                    <img 
+                    <NuxtImg 
                       :src="currentImage" 
                       :alt="`${projectStore.project?.title || 'Project'} - Image ${currentImageIndex + 1}`"
                       class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transition-opacity duration-300"
                       style="max-width: calc(100vw - 1rem); max-height: calc(100vh - 6rem);"
                       @error="$event.target.src = '/images/default_pro_img.png'"
-                    >
+                    />
                   </div>
                 </div>
                 
