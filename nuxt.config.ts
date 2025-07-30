@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image', '@nuxtjs/sitemap'],
+  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image'],
   image: {
     provider: 'ipx',
     domains: ['res.cloudinary.com'],
@@ -63,46 +63,5 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
     }
-  },
-  sitemap: {
-
-    sitemapName: 'sitemap',
-    siteUrl: process.env.NUXT_SITE_URL || 'https://oseahumen-agboifoh-john.vercel.app',
-    xsl: false,
-    routes: async () => {
-      return [
-        {
-          url: '/',
-          changefreq: 'weekly',
-          priority: 1,
-          lastmod: new Date().toISOString(),
-          images: [
-            {
-              loc: 'https://oseahumen-agboifoh-john.vercel.app/preview.jpg',
-              caption: 'Oseahumen Agboifoh John - Full-stack Developer Portfolio'
-            }
-          ]
-        },
-        {
-          url: '/about',
-          changefreq: 'monthly',
-          priority: 0.8,
-          lastmod: new Date().toISOString()
-        },
-        {
-          url: '/projects',
-          changefreq: 'weekly',
-          priority: 0.9,
-          lastmod: new Date().toISOString()
-        },
-        {
-          url: '/contact',
-          changefreq: 'monthly',
-          priority: 0.7,
-          lastmod: new Date().toISOString()
-        }
-      ];
-    }
-
   }
 })
