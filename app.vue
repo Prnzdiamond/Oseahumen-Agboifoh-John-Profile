@@ -70,7 +70,12 @@ const structuredData = computed(() => {
       "addressLocality": "Lagos",
       "addressCountry": "Nigeria"
     },
-    "knowsAbout": keywords.value.split(', ')
+    "knowsAbout": [
+    "Laravel", "PHP", "FastAPI", "Python",
+    "Vue.js", "Nuxt.js", "React.js", "Next.js",
+    "MongoDB", "MySQL", "PostgreSQL",
+    "TailwindCSS", "REST APIs", "Full-stack Development"
+  ]
   }
 
   // Add social links if available
@@ -165,7 +170,13 @@ useHead({
         "worksFor": {
           "@type": "Organization",
           "name": "Freelance / Remote"
-        }
+        },
+        "knowsAbout": [
+    "Laravel", "PHP", "FastAPI", "Python",
+    "Vue.js", "Nuxt.js", "React.js", "Next.js",
+    "MongoDB", "MySQL", "PostgreSQL",
+    "TailwindCSS", "REST APIs", "Full-stack Development"
+  ]
       })
   },
   {
