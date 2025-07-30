@@ -21,7 +21,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.BACKEND_URL || 'https://holy-leia-prnzdiamond-c803b746.koyeb.app/api',
+      apiBaseUrl: process.env.BACKEND_URL || 'https://oseahumen-agboifoh-john.duckdns.org/api',
+      // apiBaseUrl: process.env.BACKEND_URL || 'http://localhost:8000/api',
+
     }
   },
   security: {
