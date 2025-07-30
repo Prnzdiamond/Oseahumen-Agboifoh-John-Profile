@@ -100,160 +100,172 @@ useHead({
     { rel: 'dns-prefetch', href: 'https://res.cloudinary.com' },
     { rel: 'preconnect', href: 'https://oseahumen-agboifoh-john.duckdns.org' },
   ],
- script: [
- {
-  hid: 'structured-data-person',
-  type: 'application/ld+json',
-  innerHTML: JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Agboifoh Oseahumen John",
-    "alternateName": "Prnzdiamond",
-    "url": "https://oseahumen-agboifoh-john.vercel.app",
-    "image": "https://oseahumen-agboifoh-john.vercel.app/google.jpg",
-    "jobTitle": "Full-stack Web Developer",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Freelance / Remote"
-    },
-    "sameAs": [
-      "https://github.com/Prnzdiamond",
-      "https://www.linkedin.com/in/oseahumen-agboifoh-b97aa8261",
-      "mailto:oseahumenagboifoh@gmail.com"
-    ],
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Lagos",
-      "addressCountry": "Nigeria"
-    },
-    "knowsAbout": [
-      "Laravel", "PHP", "FastAPI", "Python",
-      "Vue.js", "Nuxt.js", "React.js", "Next.js",
-      "MongoDB", "MySQL", "PostgreSQL",
-      "TailwindCSS", "REST APIs", "Full-stack Development"
-    ],
-    "publisher": {
-      "@type": "Organization",
-      "name": "Oseahumen Agboifoh John",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://oseahumen-agboifoh-john.vercel.app/preview.jpg"
-      }
-    }
-  })
-}
-,
+  script: [
+  // 👤 PERSON SCHEMA (without publisher)
   {
+    hid: 'structured-data-person',
     type: 'application/ld+json',
-    children: `
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://oseahumen-agboifoh-john.vercel.app"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "About",
-            "item": "https://oseahumen-agboifoh-john.vercel.app/about"
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "Projects",
-            "item": "https://oseahumen-agboifoh-john.vercel.app/projects"
-          },
-          {
-            "@type": "ListItem",
-            "position": 4,
-            "name": "Contact",
-            "item": "https://oseahumen-agboifoh-john.vercel.app/contact"
-          }
-        ]
-      }
-    `
+    innerHTML: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Agboifoh Oseahumen John",
+      "alternateName": "Prnzdiamond",
+      "url": "https://oseahumen-agboifoh-john.vercel.app",
+      "image": "https://oseahumen-agboifoh-john.vercel.app/google.jpg",
+      "jobTitle": "Full-stack Web Developer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Freelance / Remote"
+      },
+      "sameAs": [
+        "https://github.com/Prnzdiamond",
+        "https://www.linkedin.com/in/oseahumen-agboifoh-b97aa8261",
+        "mailto:oseahumenagboifoh@gmail.com"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Lagos",
+        "addressCountry": "Nigeria"
+      },
+      "knowsAbout": [
+        "Laravel", "PHP", "FastAPI", "Python",
+        "Vue.js", "Nuxt.js", "React.js", "Next.js",
+        "MongoDB", "MySQL", "PostgreSQL",
+        "TailwindCSS", "REST APIs", "Full-stack Development"
+      ]
+    })
   },
+
+  // 🌐 WEBSITE SCHEMA (for publisher)
   {
     type: 'application/ld+json',
-    children: `
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Who is Oseahumen Agboifoh John?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Oseahumen Agboifoh John, also known as Prnzdiamond, is a full-stack web developer based in Nigeria who builds scalable web apps using Laravel, FastAPI, Vue, React, and MongoDB."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What technologies does Oseahumen specialize in?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "He specializes in Laravel (PHP), FastAPI (Python),Django (Python) Vue.js, Nuxt.js, React.js, MongoDB, MySQL, PostgreSQL, and modern development tools like Docker and Git."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can Oseahumen handle both frontend and backend development?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, he is a full-stack developer comfortable building complete systems — from frontend interfaces with Vue or React, to backend APIs and logic with Laravel or FastAPI."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What kind of projects has he worked on?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "He has worked on business dashboards, chat platforms, AI-powered agents, financial copilot systems, and custom CMS platforms across various industries."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is Oseahumen available for freelance or contract work?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, he is open to freelance or remote contract work, especially in building SaaS platforms, admin dashboards, or AI-powered business tools."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How can I contact Oseahumen?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "You can reach him through the contact page on his portfolio or by emailing oseahumenagboifoh@gmail.com. His GitHub and LinkedIn profiles are also linked on the site."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What sets Oseahumen apart as a developer?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "He has a strong ability to quickly learn and adapt, build from scratch with clear systems thinking, and deliver production-ready code under pressure."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Where is Oseahumen based?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "He is based in Nigeria and works with clients remotely across different time zones."
-            }
-          }
-        ]
+    innerHTML: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Oseahumen Agboifoh John",
+      "url": "https://oseahumen-agboifoh-john.vercel.app",
+      "publisher": {
+        "@type": "Person",
+        "name": "Agboifoh Oseahumen John",
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://oseahumen-agboifoh-john.vercel.app/google.jpg"
+        }
       }
-    `
+    })
+  },
+
+  // 🧭 BREADCRUMB SCHEMA
+  {
+    type: 'application/ld+json',
+    children: `{
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://oseahumen-agboifoh-john.vercel.app"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About",
+          "item": "https://oseahumen-agboifoh-john.vercel.app/about"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Projects",
+          "item": "https://oseahumen-agboifoh-john.vercel.app/projects"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Contact",
+          "item": "https://oseahumen-agboifoh-john.vercel.app/contact"
+        }
+      ]
+    }`
+  },
+
+  // ❓ FAQ SCHEMA
+  {
+    type: 'application/ld+json',
+    children: `{
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who is Oseahumen Agboifoh John?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oseahumen Agboifoh John, also known as Prnzdiamond, is a full-stack web developer based in Nigeria who builds scalable web apps using Laravel, FastAPI, Vue, React, and MongoDB."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What technologies does Oseahumen specialize in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "He specializes in Laravel (PHP), FastAPI (Python), Django (Python), Vue.js, Nuxt.js, React.js, MongoDB, MySQL, PostgreSQL, and modern development tools like Docker and Git."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can Oseahumen handle both frontend and backend development?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, he is a full-stack developer comfortable building complete systems — from frontend interfaces with Vue or React, to backend APIs and logic with Laravel or FastAPI."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What kind of projects has he worked on?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "He has worked on business dashboards, chat platforms, AI-powered agents, financial copilot systems, and custom CMS platforms across various industries."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Oseahumen available for freelance or contract work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, he is open to freelance or remote contract work, especially in building SaaS platforms, admin dashboards, or AI-powered business tools."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I contact Oseahumen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can reach him through the contact page on his portfolio or by emailing oseahumenagboifoh@gmail.com. His GitHub and LinkedIn profiles are also linked on the site."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What sets Oseahumen apart as a developer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "He has a strong ability to quickly learn and adapt, build from scratch with clear systems thinking, and deliver production-ready code under pressure."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where is Oseahumen based?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "He is based in Nigeria and works with clients remotely across different time zones."
+          }
+        }
+      ]
+    }`
   }
 ]
+
 ,
 __dangerouslyDisableSanitizersByTagID: {
   'ld-json': ['innerHTML']
