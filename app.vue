@@ -1,11 +1,15 @@
 <template>
   <NuxtLayout>
+    <Analytics />
     <NuxtPage />
   </NuxtLayout>
 </template>
 
 <script setup>
 import { useTheme } from '~/composables/useTheme'
+import { Analytics } from '@vercel/analytics/nuxt'
+
+
 
 const { initTheme, setupSystemWatcher } = useTheme()
 
