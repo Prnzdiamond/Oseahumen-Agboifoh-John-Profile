@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image'],
+  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image', 'nuxt-gtag'],
   image: {
     provider: 'ipx',
     domains: ['res.cloudinary.com'],
@@ -39,17 +39,34 @@ export default defineNuxtConfig({
           "'self'",
           'data:',
           'https://res.cloudinary.com',
-          'https://*.cloudinary.com'
+          'https://*.cloudinary.com',
+          'https://www.googletagmanager.com'
         ],
         'script-src': [
           "'self'",
           "'unsafe-inline'",
-          ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : [])
+          ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
+          'https://www.googletagmanager.com',
+          'https://www.google-analytics.com',
+          'https://va.vercel-scripts.com'
         ],
         'connect-src': [
           "'self'",
-          'https://oseahumen-agboifoh-john.duckdns.org'
-        ]
+          'https://oseahumen-agboifoh-john.duckdns.org',
+          'https://www.google-analytics.com',
+          'https://www.googletagmanager.com',
+          'https://va.vercel-scripts.com'
+        ],
+        'style-src': [
+          "'self'",
+          'https:',
+          "'unsafe-inline'"
+        ],
+        'base-uri': ["'none'"],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'self'"],
+        'object-src': ["'none'"],
+        'script-src-attr': ["'none'"],
       }
     }
   },
@@ -63,5 +80,8 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
     }
+  },
+  gtag: {
+    id: 'G-WQY37LSGQW'
   }
 })

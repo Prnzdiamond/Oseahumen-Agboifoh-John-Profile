@@ -138,19 +138,6 @@ useHead({
     {
       type: 'application/ld+json',
       children: () => JSON.stringify(structuredData.value)
-    },
-    // Google Analytics
-    {
-      async: true,
-      src: 'https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID'
-    },
-    {
-      children: `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'GA_MEASUREMENT_ID');
-      `
     }
   ]
 })

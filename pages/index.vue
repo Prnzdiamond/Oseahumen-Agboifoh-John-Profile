@@ -197,7 +197,7 @@
   :src="ownerStore.owner?.avatar || '/images/default_avatar.png'" 
   :alt="ownerStore.owner?.name || 'Developer'"
   @error="handleImageError($event, '/images/default_avatar.png')"
-  @load="handleImageLoad"
+  @load="handleImageLoad($event)" 
   class="w-full h-full rounded-full object-cover shadow-2xl border-4 border-white 
      dark:border-gray-800 group-hover:scale-105 transition-transform duration-500
      animate-zoom-in opacity-0 transition-opacity duration-300"
@@ -322,6 +322,7 @@
     :src="project.cover_image || '/images/default_pro_cover.png'" 
     :alt="project.title"
     @error="$event.target.src = '/images/default_pro_cover.png'"
+     @load="handleImageLoad($event)" 
     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
   />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent 
@@ -551,9 +552,11 @@ const getImageWithFallback = (imageSrc, fallbackSrc) => {
 
   const avatarImgRef = ref(null)
 
-const handleImageLoad = () => {
-  if (avatarImgRef.value) {
-    avatarImgRef.value.classList.add('loaded')
+const handleImageLoad = (event) => {
+  
+  const target = event?.target
+  if (target?.classList?.add) {
+    target.classList.add('loaded')
   }
 }
 
@@ -584,8 +587,6 @@ const handleImageError = (event, fallbackSrc) => {
       projectStore.fetchProjects()
     ])
 
-      console.log('Owner:', ownerStore.owner)
-    console.log('Projects:', projectStore.projects)
     useHeadData()
     
     if (ownerStore.owner) {
