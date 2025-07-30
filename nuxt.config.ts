@@ -65,19 +65,46 @@ export default defineNuxtConfig({
     }
   },
   sitemap: {
-    hostname: 'https://oseahumen-agboifoh-john.vercel.app',
-    gzip: true,
-    routes: [
-      '/',
-      '/about',
-      '/projects',
-      '/contact'
-    ],
-    // Add sitemap configuration for better crawling
-    defaults: {
-      changefreq: 'weekly',
-      priority: 1,
-      lastmod: new Date().toISOString()
-    }
-  },
+    sitemaps: [
+      {
+        sitemapName: 'sitemap',
+        hostname: 'https://oseahumen-agboifoh-john.vercel.app',
+        xsl: false,
+        routes: async () => {
+          return [
+            {
+              url: '/',
+              changefreq: 'weekly',
+              priority: 1,
+              lastmod: new Date().toISOString(),
+              images: [
+                {
+                  loc: 'https://oseahumen-agboifoh-john.vercel.app/preview.jpg',
+                  caption: 'Oseahumen Agboifoh John - Full-stack Developer Portfolio'
+                }
+              ]
+            },
+            {
+              url: '/about',
+              changefreq: 'monthly',
+              priority: 0.8,
+              lastmod: new Date().toISOString()
+            },
+            {
+              url: '/projects',
+              changefreq: 'weekly',
+              priority: 0.9,
+              lastmod: new Date().toISOString()
+            },
+            {
+              url: '/contact',
+              changefreq: 'monthly',
+              priority: 0.7,
+              lastmod: new Date().toISOString()
+            }
+          ];
+        }
+      }
+    ]
+  }
 })
