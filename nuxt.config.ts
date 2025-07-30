@@ -3,13 +3,12 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image', '@nuxtjs/sitemap'],
   image: {
-    provider: 'ipx',              // Built-in optimizer
+    provider: 'ipx',
     domains: ['res.cloudinary.com'],
     quality: 80,
     format: ['webp', 'avif'],
@@ -26,8 +25,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.BACKEND_URL || 'https://oseahumen-agboifoh-john.duckdns.org/api',
-      // apiBaseUrl: process.env.BACKEND_URL || 'http://localhost:8000/api',
-
+      // Add your production domain to allowed hosts
+      allowedHosts: [
+        'oseahumen-agboifoh-john.vercel.app',
+        'oseahumen-agboifoh-john-profile-82mmpd8fy-prnzdiamonds-projects.vercel.app'
+      ]
     }
   },
   security: {
@@ -43,6 +45,10 @@ export default defineNuxtConfig({
           "'self'",
           "'unsafe-inline'",
           ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : [])
+        ],
+        'connect-src': [
+          "'self'",
+          'https://oseahumen-agboifoh-john.duckdns.org'
         ]
       }
     }
@@ -66,8 +72,12 @@ export default defineNuxtConfig({
       '/about',
       '/projects',
       '/contact'
-      // Add dynamic project routes here
-    ]
+    ],
+    // Add sitemap configuration for better crawling
+    defaults: {
+      changefreq: 'weekly',
+      priority: 1,
+      lastmod: new Date().toISOString()
+    }
   },
-
 })

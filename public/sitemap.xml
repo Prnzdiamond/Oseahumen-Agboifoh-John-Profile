@@ -10,7 +10,7 @@
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://oseahumen-agboifoh-john.vercel.app/preview.jpg</image:loc>
-      <image:caption>Oseahumen Agboifoh John - Full-stack Developer Portfolio Frontend Developer Backend Developer web Developer</image:caption>
+      <image:caption>Oseahumen Agboifoh John - Full-stack Developer Portfolio</image:caption>
     </image:image>
   </url>
   
@@ -37,15 +37,5 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  
-  <!-- Add individual project pages if you have them -->
-  <!-- Example:
-  <url>
-    <loc>https://oseahumen-agboifoh-john.vercel.app/projects/project-slug</loc>
-    <lastmod>2025-01-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  -->
   
 </urlset>
