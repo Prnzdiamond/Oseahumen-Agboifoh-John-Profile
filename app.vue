@@ -45,50 +45,6 @@ const keywords = computed(() => {
   return owner.value.tech_stack.map(tech => tech.technology || tech.name || tech).join(', ')
 })
 
-// JSON-LD structured data
-const structuredData = computed(() => {
-  const baseData = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": owner.value?.name || "Oseahumen Agboifoh John",
-    "jobTitle": owner.value?.headline || "Full-stack Developer",
-    "description": owner.value?.bio || defaultDescription,
-    "image": dynamicImage.value,
-    "url": siteUrl,
-    "worksFor": {
-      "@type": "Organization", 
-      "name": "Freelance"
-    },
-     "alternateName": "Prnzdiamond",
-    "sameAs": [
-          "https://github.com/Prnzdiamond",
-          "https://www.linkedin.com/in/oseahumen-agboifoh-b97aa8261",
-          "mailto:oseahumenagboifoh@gmail.com"
-        ],
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Lagos",
-      "addressCountry": "Nigeria"
-    },
-    "knowsAbout": [
-    "Laravel", "PHP", "FastAPI", "Python",
-    "Vue.js", "Nuxt.js", "React.js", "Next.js",
-    "MongoDB", "MySQL", "PostgreSQL",
-    "TailwindCSS", "REST APIs", "Full-stack Development"
-  ]
-  }
-
-  // Add social links if available
-  if (owner.value?.social_links) {
-    baseData.sameAs = [
-      owner.value.social_links.linkedin,
-      owner.value.social_links.github,
-      owner.value.social_links.twitter
-    ].filter(Boolean)
-  }
-
-  return baseData
-})
 
 // Set initial SEO head
 useHead({
@@ -145,40 +101,48 @@ useHead({
     { rel: 'preconnect', href: 'https://oseahumen-agboifoh-john.duckdns.org' },
   ],
  script: [
-  {
-     hid: 'structured-data-main',
-    id: 'ld-json',
-    type: 'application/ld+json',
-    innerHTML: JSON.stringify(structuredData.value)
-   },
-  {
-      hid: 'structured-data-person',
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Agboifoh Oseahumen John",
-        "alternateName": "Prnzdiamond",
-        "url": "https://oseahumen-agboifoh-john.vercel.app",
-        "image": "https://oseahumen-agboifoh-john.vercel.app/preview.jpg",
-        "sameAs": [
-          "https://github.com/Prnzdiamond",
-          "https://www.linkedin.com/in/oseahumen-agboifoh-b97aa8261",
-          "mailto:oseahumenagboifoh@gmail.com"
-        ],
-        "jobTitle": "Full-Stack Web Developer",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Freelance / Remote"
-        },
-        "knowsAbout": [
-    "Laravel", "PHP", "FastAPI", "Python",
-    "Vue.js", "Nuxt.js", "React.js", "Next.js",
-    "MongoDB", "MySQL", "PostgreSQL",
-    "TailwindCSS", "REST APIs", "Full-stack Development"
-  ]
-      })
-  },
+ {
+  hid: 'structured-data-person',
+  type: 'application/ld+json',
+  innerHTML: JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Agboifoh Oseahumen John",
+    "alternateName": "Prnzdiamond",
+    "url": "https://oseahumen-agboifoh-john.vercel.app",
+    "image": "https://oseahumen-agboifoh-john.vercel.app/google.jpg",
+    "jobTitle": "Full-stack Web Developer",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Freelance / Remote"
+    },
+    "sameAs": [
+      "https://github.com/Prnzdiamond",
+      "https://www.linkedin.com/in/oseahumen-agboifoh-b97aa8261",
+      "mailto:oseahumenagboifoh@gmail.com"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Lagos",
+      "addressCountry": "Nigeria"
+    },
+    "knowsAbout": [
+      "Laravel", "PHP", "FastAPI", "Python",
+      "Vue.js", "Nuxt.js", "React.js", "Next.js",
+      "MongoDB", "MySQL", "PostgreSQL",
+      "TailwindCSS", "REST APIs", "Full-stack Development"
+    ],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Oseahumen Agboifoh John",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://oseahumen-agboifoh-john.vercel.app/preview.jpg"
+      }
+    }
+  })
+}
+,
   {
     type: 'application/ld+json',
     children: `

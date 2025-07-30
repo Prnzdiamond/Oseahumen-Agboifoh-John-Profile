@@ -79,9 +79,14 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
+      meta: [
+        { name: 'author', content: 'Oseahumen Agboifoh John' },
+        { name: 'publisher', content: 'Oseahumen Agboifoh John' }
+      ]
     }
   },
   gtag: {
     id: 'G-WQY37LSGQW'
   }
+
 })
