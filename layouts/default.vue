@@ -253,11 +253,13 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useOwnerStore } from '~/stores/ownerStore'
+import { useFavicon } from '~/composables/useFavicon'
 import { HomeIcon, UserIcon, FolderIcon, MailIcon } from 'lucide-vue-next'
 
 const mobileMenuOpen = ref(false)
 const ownerStore = useOwnerStore()
 const route = useRoute()
+const { updateFavicon } = useFavicon()
 
 // Separate error states for each avatar instance
 const avatarError = ref(false)
@@ -295,8 +297,13 @@ const isActiveLink = (linkPath) => {
   return false
 }
 
-// Reset error states when owner data changes
-watch(owner, () => {
+// Update favicon when owner avatar changes
+watch(owner, (newOwner) => {
+  if (newOwner?.avatar) {
+    updateFavicon(newOwner.avatar)
+  }
+  
+  // Reset error states when owner data changes
   avatarError.value = false
   mobileAvatarError.value = false
   footerAvatarError.value = false

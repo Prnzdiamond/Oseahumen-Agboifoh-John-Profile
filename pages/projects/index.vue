@@ -276,6 +276,11 @@
   <script setup>
   import { ref, computed, onMounted } from 'vue'
   import { useProjectStore } from '~/stores/projectStore'
+
+  import { useProjectsPageMeta } from '~/composables/usePageMeta'
+
+
+  useProjectsPageMeta()
   
   
   const projectStore = useProjectStore()

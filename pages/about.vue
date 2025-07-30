@@ -404,9 +404,12 @@
 <script setup>
 import { useOwnerStore } from '~/stores/ownerStore'
 import { computed, ref, onMounted } from 'vue'
+import { useAboutPageMeta } from '~/composables/usePageMeta'
 
 const ownerStore = useOwnerStore()
 const expandedHobbies = ref([])
+
+useAboutPageMeta(ownerStore.owner)
 
 // Initialize head with default values
 const headData = ref({

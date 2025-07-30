@@ -1,2 +1,13 @@
-User-Agent: *
-Disallow:
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://oseahumen-agboifoh-john.vercel.app/sitemap.xml
+
+# Crawl-delay (optional, helps with server load)
+Crawl-delay: 1
+
+# Block common bot paths if needed
+Disallow: /api/
+Disallow: /_nuxt/
+Disallow: /admin/

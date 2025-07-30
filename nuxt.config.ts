@@ -3,10 +3,11 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image'],
+  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image', '@nuxtjs/sitemap'],
   image: {
     provider: 'ipx',              // Built-in optimizer
     domains: ['res.cloudinary.com'],
@@ -17,7 +18,10 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       tailwindcss(),
-    ]
+    ],
+    server: {
+      allowedHosts: ['ed64e78b8c36.ngrok-free.app']
+    },
   },
   runtimeConfig: {
     public: {
@@ -42,5 +46,28 @@ export default defineNuxtConfig({
         ]
       }
     }
-  }
+  },
+  nitro: {
+    prerender: {
+      routes: ['/sitemap.xml', '/robots.txt']
+    }
+  },
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+    }
+  },
+  sitemap: {
+    hostname: 'https://oseahumen-agboifoh-john.vercel.app',
+    gzip: true,
+    routes: [
+      '/',
+      '/about',
+      '/projects',
+      '/contact'
+      // Add dynamic project routes here
+    ]
+  },
+
 })

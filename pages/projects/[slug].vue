@@ -445,6 +445,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProjectStore } from '~/stores/projectStore'
 import { useHead } from '#app'
+import { useProjectPageMeta } from '~/composables/usePageMeta'
 
 const route = useRoute()
 const projectStore = useProjectStore()
@@ -542,6 +543,8 @@ onMounted(async () => {
       { property: 'og:image', content: projectStore.project.cover_image },
     ]
   }
+
+  useProjectPageMeta(projectStore.project)
 })
 
 onUnmounted(() => {

@@ -192,6 +192,7 @@
                 <!-- Avatar -->
                 <!-- Avatar -->
 <div v-else-if="ownerStore.owner?.avatar || !ownerStore.loading" class="relative w-full h-full group">
+  <ClientOnly>
   <NuxtImg 
   :src="ownerStore.owner?.avatar || '/images/default_avatar.png'" 
   :alt="ownerStore.owner?.name || 'Developer'"
@@ -201,6 +202,7 @@
      dark:border-gray-800 group-hover:scale-105 transition-transform duration-500
      animate-zoom-in opacity-0 transition-opacity duration-300"
 />
+  </ClientOnly>
                   <!-- Multiple Animated Rings -->
                   <div class="absolute inset-0 rounded-full border-4 border-blue-500/30 animate-ping"></div>
                   <div class="absolute inset-0 rounded-full border-4 border-cyan-500/20 animate-ping animation-delay-1000"></div>

@@ -264,6 +264,11 @@ import { reactive, ref } from 'vue'
 import { useRuntimeConfig } from '#app'
 import { useOwnerStore } from '~~/stores/ownerStore'
 
+import { useContactPageMeta } from '~/composables/usePageMeta'
+
+// Set page-specific meta tags
+useContactPageMeta()
+
 const ownerStore = useOwnerStore()
 
 // SEO
