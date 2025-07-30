@@ -134,12 +134,17 @@ useHead({
     { rel: 'preconnect', href: 'https://oseahumen-agboifoh-john.duckdns.org' },
   ],
   script: [
-    // Structured Data
     {
-      type: 'application/ld+json',
-      children: () => JSON.stringify(structuredData.value)
-    }
-  ]
+   hid: 'ld-json',
+    id: 'ld-json',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify(structuredData.value)
+  }
+],
+__dangerouslyDisableSanitizersByTagID: {
+  'ld-json': ['innerHTML']
+}
+
 })
 
 // Initialize theme
