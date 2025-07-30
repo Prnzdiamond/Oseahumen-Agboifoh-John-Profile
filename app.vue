@@ -9,7 +9,7 @@
 import { useTheme } from '~/composables/useTheme'
 import { Analytics } from '@vercel/analytics/nuxt'
 import { useOwnerStore } from '~/stores/ownerStore'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 const ownerStore = useOwnerStore()
 const isOwnerLoaded = ref(false)
@@ -145,19 +145,32 @@ useHead({
 // Initialize theme
 const { initTheme, setupSystemWatcher } = useTheme()
 
+// Watch for owner data changes and update loaded state
+watch(owner, (newOwner) => {
+  isOwnerLoaded.value = !!newOwner
+}, { immediate: true })
+
 // Client-side initialization
 onMounted(async () => {
-  // Initialize theme
+  // Initialize theme first (synchronous)
   initTheme()
   setupSystemWatcher()
   
-  // Fetch owner data without blocking app initialization
-  try {
-    await ownerStore.fetchOwner()
+  // Check if owner data is already available (from layout or other components)
+  if (ownerStore.owner) {
     isOwnerLoaded.value = true
-  } catch (error) {
-    console.warn('Failed to load owner data:', error)
-    // App continues to work with default SEO data
+  } else {
+    // Only fetch if not already available - let layout handle the main fetch
+    // This is a backup in case layout doesn't load for some reason
+    setTimeout(async () => {
+      if (!ownerStore.owner && !ownerStore.loading) {
+        try {
+          await ownerStore.ensureOwner()
+        } catch (error) {
+          console.warn('Backup owner fetch failed:', error)
+        }
+      }
+    }, 100)
   }
 })
 </script>
