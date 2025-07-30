@@ -139,6 +139,42 @@ useHead({
     id: 'ld-json',
     type: 'application/ld+json',
     innerHTML: JSON.stringify(structuredData.value)
+    },
+     {
+    type: 'application/ld+json',
+    children: `
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://oseahumen-agboifoh-john.vercel.app"
+          }
+        ]
+      }
+    `
+  },
+  {
+    type: 'application/ld+json',
+    children: `
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does Oseahumen Agboifoh John do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "He is a full-stack developer with Laravel, FastAPI, Vue, and React experience."
+            }
+          }
+        ]
+      }
+    `
   }
 ],
 __dangerouslyDisableSanitizersByTagID: {
