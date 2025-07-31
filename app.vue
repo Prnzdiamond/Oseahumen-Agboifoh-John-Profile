@@ -76,8 +76,8 @@ useHead({
     { name: 'twitter:description', content: dynamicDescription },
     { name: 'twitter:image', content: dynamicImage },
     { name: 'twitter:image:alt', content: () => `${owner.value?.name || 'Developer'} - Portfolio Preview` },
-    { name: 'twitter:site', content: () => owner.value?.social_links?.twitter || '@yourhandle' },
-    { name: 'twitter:creator', content: () => owner.value?.social_links?.twitter || '@yourhandle' },
+    { name: 'twitter:site', content: () => owner.value?.social_links?.twitter || '@the_PrnzDiamond' },
+    { name: 'twitter:creator', content: () => owner.value?.social_links?.twitter || '@the_PrnzDiamond' },
 
     // App specific
     { name: 'application-name', content: () => `${owner.value?.name || 'Developer'} Portfolio` },

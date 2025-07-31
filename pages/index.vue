@@ -474,10 +474,10 @@
     useHead({
       title: 'Full-Stack Developer Portfolio',
       meta: [
-        { name: 'description', content: 'Full-stack developer specializing in modern web technologies. View my latest projects and get in touch for collaboration.' },
-        { name: 'keywords', content: 'full-stack developer, web development, portfolio, modern technologies' },
-        { property: 'og:title', content: 'Full-Stack Developer Portfolio' },
-        { property: 'og:description', content: 'Full-stack developer specializing in modern web technologies.' },
+        { name: 'description', content: 'Full-stack web developer specializing in modern web technologies. View my latest projects and get in touch for collaboration.' },
+        { name: 'keywords', content: 'full-stack web developer, web development, portfolio, modern technologies' },
+        { property: 'og:title', content: 'Full-Stack web Developer Portfolio' },
+        { property: 'og:description', content: 'Full-stack web developer specializing in modern web technologies.' },
         { property: 'og:type', content: 'website' },
       ]
     })
@@ -595,7 +595,7 @@ const handleImageError = (event, fallbackSrc) => {
         title: `${ownerStore.owner.name} - ${ownerStore.owner.headline}`,
         meta: [
           { name: 'description', content: ownerStore.owner.bio },
-          { property: 'og:title', content: `${ownerStore.owner.name} - ${ownerStore.owner.headline}` },
+          { property: 'og:title', content: `${ownerStore.owner.name} - ${ownerStore.owner.headline} - web dev` },
           { property: 'og:description', content: ownerStore.owner.bio },
           { property: 'og:image', content: ownerStore.owner.avatar },
         ]

@@ -1,12 +1,52 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import tailwindcss from "@tailwindcss/vite";
+import url from "./server/api/url";
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image', 'nuxt-gtag'],
+  modules: ['@pinia/nuxt', 'nuxt-security', '@nuxt/image', 'nuxt-gtag', '@nuxtjs/sitemap'],
+
+
+  site: {
+    url: "https://oseahumen-agboifoh-john.vercel.app",
+    name: "Oseahumen Agboifoh John",
+    description: "Oseahumen Agboifoh John is a software engineer and web developer with a passion for building innovative web applications. Explore my projects and learn more about my work.",
+  },
+
+  sitemap: {
+    defaults: {
+      changefreq: 'monthly',
+      priority: 0.5,
+      lastmod: new Date().toISOString(),
+    },
+    urls: [
+      {
+        loc: '/',
+        changefreq: 'daily',
+        priority: 1.0, // highest priority
+      },
+      {
+        loc: '/about',
+        changefreq: 'monthly',
+        priority: 0.8,
+      },
+      {
+        loc: '/contact',
+        changefreq: 'monthly',
+        priority: 0.8,
+      },
+      {
+        loc: '/projects',
+        changefreq: 'weekly',
+        priority: 0.9,
+      }
+    ],
+    sources: ['/api/url']
+  }
+  ,
   image: {
     provider: 'ipx',
     domains: ['res.cloudinary.com'],
@@ -14,6 +54,7 @@ export default defineNuxtConfig({
     format: ['webp', 'avif'],
     screens: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280 }
   },
+
   vite: {
     plugins: [
       tailwindcss(),
@@ -22,16 +63,17 @@ export default defineNuxtConfig({
       allowedHosts: ['ed64e78b8c36.ngrok-free.app']
     },
   },
+
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.BACKEND_URL || 'https://oseahumen-agboifoh-john.duckdns.org/api',
-      // Add your production domain to allowed hosts
       allowedHosts: [
         'oseahumen-agboifoh-john.vercel.app',
         'oseahumen-agboifoh-john-profile-82mmpd8fy-prnzdiamonds-projects.vercel.app'
       ]
     }
   },
+
   security: {
     headers: {
       contentSecurityPolicy: {
@@ -70,11 +112,13 @@ export default defineNuxtConfig({
       }
     }
   },
+
   nitro: {
     prerender: {
       routes: ['/sitemap.xml', '/robots.txt']
     }
   },
+
   app: {
     head: {
       charset: 'utf-8',
@@ -85,8 +129,8 @@ export default defineNuxtConfig({
       ]
     }
   },
+
   gtag: {
     id: 'G-WQY37LSGQW'
   }
-
 })
