@@ -54,7 +54,7 @@ export const useOwnerStore = defineStore("owner", {
                     headers: {
                         'Cache-Control': 'max-age=300' // 5 minutes
                     },
-                    timeout: 10000, // 10 second timeout
+                   
                 });
 
                 if (response.success) {
