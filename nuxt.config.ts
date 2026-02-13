@@ -15,6 +15,12 @@ export default defineNuxtConfig({
     name: "Oseahumen Agboifoh John",
     description: "Oseahumen Agboifoh John is a software engineer and web developer with a passion for building innovative web applications. Explore my projects and learn more about my work.",
   },
+  link: [
+    { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+    { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+    { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+    { rel: 'manifest', href: '/site.webmanifest' }
+  ]
 
   sitemap: {
     defaults: {
@@ -126,6 +132,12 @@ export default defineNuxtConfig({
       meta: [
         { name: 'author', content: 'Oseahumen Agboifoh John' },
         { name: 'publisher', content: 'Oseahumen Agboifoh John' }
+      ],
+      link: [
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+        { rel: 'manifest', href: '/site.webmanifest' }
       ]
     }
   },
