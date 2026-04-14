@@ -61,42 +61,33 @@
               </div>
   
               <!-- Floating Tech Stack Badges with Icons -->
-              <div v-if="ownerStore.owner.tech_stack?.length" class="relative">
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 animate-fade-in">Technologies I master:</p>
-                <div class="flex flex-wrap gap-3">
-                  <div 
-                    v-for="(tech, index) in ownerStore.owner.tech_stack.slice(0, 8)" 
-                    :key="tech.technology"
-                    :style="{ animationDelay: `${index * 0.1}s` }"
-                    class="group relative px-4 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 
-                           border border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200 
-                           rounded-full text-sm font-medium hover:scale-110 hover:shadow-xl hover:shadow-blue-500/25
-                           transition-all duration-300 animate-float-in cursor-default
-                           hover:bg-gradient-to-r hover:from-blue-100 hover:to-cyan-100 
-                           dark:hover:from-blue-800/40 dark:hover:to-cyan-800/40"
-                  >
-                    <!-- Tech Icon -->
-                    <div class="flex items-center space-x-2">
-                      <span class="text-lg">{{ getTechIcon(tech.technology) }}</span>
-                      <span class="relative z-10">{{ tech.technology }}</span>
-                      <span v-if="tech.rating" class="ml-1 text-xs opacity-75 relative z-10">
-                        {{ '★'.repeat(tech.rating) }}
-                      </span>
+             <div v-if="ownerStore.owner.tech_stack?.length" class="relative">
+              <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 animate-fade-in">Technologies I work with:</p>
+              <!-- Overflow mask so pills fade at edges -->
+              <div class="relative overflow-hidden"
+                style="mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);">
+                <!-- Double the items so the loop is seamless -->
+                <div class="flex gap-3 animate-marquee w-max">
+                  <template v-for="pass in 2" :key="pass">
+                    <div v-for="tech in ownerStore.owner.tech_stack" :key="`${pass}-${tech.technology}`" class="group relative flex-shrink-0 flex items-center gap-2 px-4 py-2
+                               bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30
+                               border border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200
+                               rounded-full text-sm font-medium hover:scale-110 hover:shadow-xl hover:shadow-blue-500/25
+                               transition-all duration-300 cursor-default">
+                      <!-- Devicon from composable — no hardcoding -->
+                      <i v-if="getIconClass(tech.technology)" :class="getIconClass(tech.technology)"
+                        class="text-lg leading-none flex-shrink-0"></i>
+                      <svg v-else class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                      <span>{{ tech.technology }}</span>
+                      <span v-if="tech.rating" class="text-xs opacity-75">{{ '★'.repeat(tech.rating) }}</span>
                     </div>
-                    
-                    <!-- Animated Background -->
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
-                    
-                    <!-- Tooltip -->
-                    <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
-                      {{ tech.technology }}
-                      <span v-if="tech.years_experience"> • {{ tech.years_experience }} year{{ tech.years_experience > 1 ? 's' : '' }}</span>
-                      <span v-if="tech.rating"> • {{ tech.rating }}/5 ★</span>
-                      <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
-                    </div>
-                  </div>
+                  </template>
                 </div>
               </div>
+            </div>
   
               <!-- Enhanced CTA Buttons with More Animations -->
               <div class="flex flex-col sm:flex-row gap-4 pt-4 mb-5">
@@ -247,39 +238,46 @@
           </div>
         </div>
   
-        <!-- Enhanced Scroll Indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-gentle">
-          <div class="w-6 h-10 border-2 border-blue-400 rounded-full flex justify-center relative overflow-hidden">
-            <div class="w-1 h-3 bg-blue-400 rounded-full mt-2 animate-scroll-indicator"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/20 to-transparent animate-pulse"></div>
-          </div>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center animate-fade-in-delayed">Scroll to explore</p>
+        <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 animate-scroll-bounce pointer-events-none">
+        <div class="flex flex-col items-center gap-1 text-blue-500 dark:text-blue-400 opacity-70">
+          <span class="text-xs font-medium tracking-widest uppercase">Scroll</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
         </div>
+      </div>
       </section>
   
       <!-- Stats Section -->
       <section class="py-20 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-900">
         <div class="max-w-7xl mx-auto px-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="text-center group hover:scale-105 transition-transform duration-300">
-              <div class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2 animate-counter">
-                {{ projectStore.projects?.length || '0' }}
-              </div>
-              <div class="text-gray-600 dark:text-gray-400 font-medium">Projects Completed</div>
+        <div ref="statsRef" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center group hover:scale-105 transition-transform duration-300">
+            <div
+              class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2"
+              :class="statsVisible ? 'animate-count-up' : 'opacity-0'">
+              {{ statsVisible ? (projectStore.projects?.length || 0) : 0 }}
             </div>
-            <div class="text-center group hover:scale-105 transition-transform duration-300">
-              <div class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2 animate-counter">
-                {{ ownerStore.owner?.tech_stack?.length || '0' }}
-              </div>
-              <div class="text-gray-600 dark:text-gray-400 font-medium">Technologies Mastered</div>
-            </div>
-            <div class="text-center group hover:scale-105 transition-transform duration-300">
-              <div class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2 animate-counter">
-                {{ ownerStore.owner?.languages?.length || '0' }}
-              </div>
-              <div class="text-gray-600 dark:text-gray-400 font-medium">Languages Spoken</div>
-            </div>
+            <div class="text-gray-600 dark:text-gray-400 font-medium">Projects Completed</div>
           </div>
+          <div class="text-center group hover:scale-105 transition-transform duration-300">
+            <div
+              class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2"
+              :class="statsVisible ? 'animate-count-up' : 'opacity-0'" style="animation-delay:0.15s">
+              {{ statsVisible ? (ownerStore.owner?.tech_stack?.length || 0) : 0 }}
+            </div>
+            <div class="text-gray-600 dark:text-gray-400 font-medium">Technologies Mastered</div>
+          </div>
+          <div class="text-center group hover:scale-105 transition-transform duration-300">
+            <div
+              class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2"
+              :class="statsVisible ? 'animate-count-up' : 'opacity-0'" style="animation-delay:0.3s">
+              {{ statsVisible ? (ownerStore.owner?.languages?.length || 0) : 0 }}
+            </div>
+            <div class="text-gray-600 dark:text-gray-400 font-medium">Languages Spoken</div>
+          </div>
+        </div>
         </div>
       </section>
   
@@ -461,13 +459,19 @@
   
   <script setup>
   import { useOwnerStore } from '~/stores/ownerStore'
+  import { usePersonJsonLd } from '~/composables/usePageMeta'
   import { useProjectStore } from '~/stores/projectStore'
+  import { useTechnologyStore } from '~/stores/technologyStore'
+  import { useTechnology } from '~/composables/useTechnology'
   import { computed } from 'vue'
   import { ref } from 'vue'
   
   // Stores
   const ownerStore = useOwnerStore()
   const projectStore = useProjectStore()
+  const techStore = useTechnologyStore()
+  const { getIconClass, getCustomIconUrl } = useTechnology()
+
   
   // SEO and Meta
   const useHeadData = () => {
@@ -495,60 +499,11 @@ const getImageWithFallback = (imageSrc, fallbackSrc) => {
   
   // State for Typewriter Effect
   const displayedHeadline = ref('')
+  const statsRef = ref(null)
+  const statsVisible = ref(false)
   const typewriterIndex = ref(0)
   const isDeleting = ref(false)
   
-  // Tech Icons Mapping
-  const getTechIcon = (techName) => {
-    const icons = {
-      'JavaScript': '🟨',
-      'TypeScript': '🔷',
-      'React': '⚛️',
-      'Vue': '💚',
-      'Angular': '🔴',
-      'Node.js': '💚',
-      'Python': '🐍',
-      'Java': '☕',
-      'PHP': '🐘',
-      'Laravel': '🔴',
-      'Django': '🐍',
-      'Express': '🚂',
-      'Next.js': '⚫',
-      'Nuxt.js': '💚',
-      'HTML': '🧡',
-      'CSS': '🔵',
-      'SASS': '🌸',
-      'Tailwind': '🌊',
-      'Bootstrap': '🟣',
-      'MySQL': '🐬',
-      'PostgreSQL': '🐘',
-      'MongoDB': '🍃',
-      'Redis': '🔴',
-      'Docker': '🐳',
-      'AWS': '🟠',
-      'Git': '🌿',
-      'GitHub': '🐙',
-      'Firebase': '🔥',
-      'Vercel': '▲',
-      'Netlify': '🌐',
-      'C++': '⚙️',
-      'C#': '🔷',
-      'Go': '🐹',
-      'Rust': '🦀',
-      'Swift': '🍎',
-      'Kotlin': '🟣',
-      'Flutter': '💙',
-      'React Native': '📱',
-      'GraphQL': '💜',
-      'REST': '🌐',
-      'Webpack': '📦',
-      'Vite': '⚡',
-      'Jest': '🃏',
-      'Cypress': '🌲'
-    }
-    
-    return icons[techName] || '⚡' // Default icon for unknown technologies
-  }
 
   const avatarImgRef = ref(null)
 
@@ -584,13 +539,27 @@ const handleImageError = (event, fallbackSrc) => {
     // Fetch data immediately when component mounts
     await Promise.all([
       ownerStore.fetchOwner(),
-      projectStore.fetchProjects()
+      projectStore.fetchProjects(),
+      techStore.fetchCatalog(),
     ])
 
     useHeadData()
     
     if (ownerStore.owner) {
       startTypewriter()
+      if (statsRef.value) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              statsVisible.value = true
+              observer.disconnect()
+            }
+          },
+          { threshold: 0.3 }
+        )
+        observer.observe(statsRef.value)
+      }
+      usePersonJsonLd(ownerStore.owner)
       useHead({
         title: `${ownerStore.owner.name} - ${ownerStore.owner.headline}`,
         meta: [

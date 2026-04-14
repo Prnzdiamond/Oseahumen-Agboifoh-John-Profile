@@ -1,368 +1,489 @@
 <template>
-    <div class="min-h-screen bg-white dark:bg-gray-900">
-      <!-- Hero Section -->
-      <section class="relative py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 overflow-hidden">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 pointer-events-none">
-          <div class="absolute top-20 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
-          <div class="absolute bottom-20 right-10 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl animate-float-delayed"></div>
+  <div class="min-h-screen bg-white dark:bg-gray-900">
+
+    <!-- Hero / Header -->
+    <section class="relative py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100
+                    dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl animate-float-delayed"></div>
+      </div>
+
+      <div class="relative max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12 animate-slide-up">
+          <h1 class="text-5xl lg:text-6xl font-bold mb-6">
+            <span class="text-gray-900 dark:text-white">My</span>
+            <span class="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+              Projects
+            </span>
+          </h1>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Explore my portfolio of innovative solutions and technical achievements.
+          </p>
         </div>
-  
-        <div class="relative max-w-6xl mx-auto px-6">
-          <div class="text-center mb-12 animate-slide-up">
-            <h1 class="text-5xl lg:text-6xl font-bold mb-6">
-              <span class="text-gray-900 dark:text-white">My</span>
-              <span class="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                Projects
+
+        <!-- Search + Sort + Filter toggle row -->
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-4 animate-slide-up-delayed">
+          <div class="relative flex-1 max-w-md">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search projects..."
+              class="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-blue-200
+                     dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500
+                     focus:border-blue-500 transition-all duration-200 text-gray-900
+                     dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+            >
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <!-- Filter toggle button — shows count of active filters -->
+            <button
+              @click="filterPanelOpen = !filterPanelOpen"
+              :class="[
+                'inline-flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-200',
+                activeFilters.length > 0
+                  ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20'
+                  : 'bg-white dark:bg-gray-800 border-blue-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400'
+              ]"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+              </svg>
+              Filter
+              <span v-if="activeFilters.length"
+                class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-white/25 rounded-full">
+                {{ activeFilters.length }}
               </span>
-            </h1>
-            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Explore my portfolio of innovative solutions, creative designs, and technical achievements that showcase my passion for development.
-            </p>
-          </div>
-  
-          <!-- Filters & Search -->
-          <div class="flex flex-col md:flex-row gap-4 justify-between items-center animate-slide-up-delayed">
-            <!-- Search Bar -->
-            <div class="relative flex-1 max-w-md">
-              <input 
-                v-model="searchQuery"
-                type="text" 
-                placeholder="Search projects..."
-                class="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-              >
-              <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              <svg :class="['w-4 h-4 transition-transform duration-200', filterPanelOpen ? 'rotate-180' : '']"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
-            </div>
-  
-            <!-- Sort Options -->
-            <div class="flex items-center space-x-4">
-              <select 
-                v-model="sortBy"
-                class="px-4 py-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 dark:text-white"
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="title">Title A-Z</option>
-              </select>
-  
-              <button 
-                @click="viewMode = viewMode === 'grid' ? 'list' : 'grid'"
-                class="p-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-600 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200"
-              >
-                <svg v-if="viewMode === 'grid'" class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                </svg>
-                <svg v-else class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-  
-      <!-- Projects Section -->
-      <section class="py-20">
-        <div class="max-w-7xl mx-auto px-6">
-          
-          <!-- Loading State -->
-          <div v-if="projectStore.loading" :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
-            <div v-for="i in 6" :key="i" class="animate-pulse">
-              <div v-if="viewMode === 'grid'" class="bg-gray-200 dark:bg-gray-700 h-64 rounded-xl mb-4 flex items-center justify-center">
-  <NuxtImg src="/images/default_pro_img.png" alt="Loading..." class="w-16 h-16 opacity-50"/>
-</div>
-              <div v-else class="flex space-x-4">
-                <div class="bg-gray-200 dark:bg-gray-700 w-48 h-32 rounded-xl"></div>
-                <div class="flex-1 space-y-2">
-                  <div class="bg-gray-200 dark:bg-gray-700 h-6 rounded"></div>
-                  <div class="bg-gray-200 dark:bg-gray-700 h-4 rounded w-3/4"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-  
-          <!-- Projects Grid -->
-          <div v-else-if="filteredProjects.length" :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
-            <div 
-              v-for="(project, index) in filteredProjects" 
-              :key="project.id"
-              :style="{ animationDelay: `${index * 0.1}s` }"
-              class="group animate-fade-in-up"
-            >
-              <!-- Grid View -->
-              <div v-if="viewMode === 'grid'" 
-                   class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-blue-100 dark:border-gray-700">
-                
-                <!-- Project Image -->
-                <div class="relative h-48 overflow-hidden">
-                  <NuxtImg 
-  :src="project.cover_image || '/images/default_pro_cover.png'" 
-  :alt="project.title"
-  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-  @error="$event.target.src = '/images/default_pro_cover.png'"
-/>
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <!-- Overlay Buttons -->
-                  <div class="absolute inset-0 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <NuxtLink 
-                      :to="`/projects/${project.slug}`"
-                      class="px-4 py-2 bg-white/90 text-gray-900 rounded-lg font-semibold hover:bg-white transition-colors duration-200"
-                    >
-                      View Details
-                    </NuxtLink>
-                    <a 
-                      v-if="project.demo_url"
-                      :href="project.demo_url" 
-                      target="_blank"
-                      class="px-4 py-2 bg-blue-600/90 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200"
-                    >
-                      Live Demo
-                    </a>
-                  </div>
-                </div>
-                
-                <!-- Project Content -->
-                <div class="p-6">
-                  <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                    {{ project.title }}
-                  </h3>
-                  <!-- Status and Type Badges -->
-                  <div class="flex items-center space-x-2 mb-2">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full"
-                          :class="{
-                            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200': project.status === 'completed',
-                            'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200': project.status === 'in_progress',
-                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200': project.status === 'planning',
-                            'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200': project.status === 'on_hold',
-                            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200': project.status === 'cancelled'
-                          }">
-                      {{ project.status?.replace('_', ' ') }}
-                    </span>
-                    <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 text-xs font-medium rounded-full">
-                      {{ project.type?.replace('_', ' ') }}
-                    </span>
-                  </div>
-                  <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                    {{ project.description }}
-                  </p>
-                  
-                  <!-- Tech Stack -->
-                  <div class="flex flex-wrap gap-2">
-                    <span 
-                      v-for="tech in project.technologies?.slice(0, 3)" 
-                      :key="tech"
-                      class="px-3 py-1 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium border border-blue-200 dark:border-blue-700"
-                    >
-                      {{ tech }}
-                    </span>
-                    <span 
-                      v-if="project.technologies?.length > 3"
-                      class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium"
-                    >
-                      +{{ project.technologies.length - 3 }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-  
-              <!-- List View -->
-              <div v-else 
-                   class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-blue-100 dark:border-gray-700 group">
-                <div class="flex flex-col md:flex-row">
-                  <!-- Project Image -->
-                  <div class="md:w-48 h-48 md:h-32 relative overflow-hidden">
-                    <NuxtImg 
-  :src="project.cover_image || '/images/default_pro_cover.png'" 
-  :alt="project.title"
-  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-  @error="$event.target.src = '/images/default_pro_cover.png'"
-/>
-                  </div>
-                  
-                  <!-- Project Content -->
-                  <div class="flex-1 p-6">
-                    <div class="flex justify-between items-start mb-2">
-                      <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                        {{ project.title }}
-                      </h3>
-                      <!-- Status and Type Badges -->
-                      <div class="flex items-center space-x-2 mb-2">
-                        <span class="px-2 py-1 text-xs font-medium rounded-full"
-                              :class="{
-                                'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200': project.status === 'completed',
-                                'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200': project.status === 'in_progress',
-                                'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200': project.status === 'planning',
-                                'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200': project.status === 'on_hold',
-                                'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200': project.status === 'cancelled'
-                              }">
-                          {{ project.status?.replace('_', ' ') }}
-                        </span>
-                        <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 text-xs font-medium rounded-full">
-                          {{ project.type?.replace('_', ' ') }}
-                        </span>
-                      </div>
-                      <div class="flex space-x-2">
-                        <NuxtLink 
-                          :to="`/projects/${project.slug}`"
-                          class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
-                        >
-                          Details
-                        </NuxtLink>
-                        <a 
-                          v-if="project.demo_url"
-                          :href="project.demo_url" 
-                          target="_blank"
-                          class="px-3 py-1 border border-blue-600 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200"
-                        >
-                          Demo
-                        </a>
-                      </div>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                      {{ project.description }}
-                    </p>
-                    
-                    <!-- Tech Stack -->
-                    <div class="flex flex-wrap gap-2">
-                      <span 
-                        v-for="tech in project.technologies?.slice(0, 5)" 
-                        :key="tech"
-                        class="px-2 py-1 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-medium"
-                      >
-                        {{ tech }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-  
-          <!-- No Projects State -->
-          <div v-else-if="!projectStore.loading && !projectStore.error" class="text-center py-16">
-            <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-12 h-12 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </button>
+
+            <select v-model="sortBy"
+              class="px-4 py-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-600
+                     rounded-xl focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="title">Title A–Z</option>
+            </select>
+
+            <button @click="viewMode = viewMode === 'grid' ? 'list' : 'grid'"
+              class="p-3 bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-600
+                     rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200">
+              <svg v-if="viewMode === 'grid'" class="w-5 h-5 text-gray-600 dark:text-gray-400"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
               </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Projects Found</h3>
-            <p class="text-gray-600 dark:text-gray-400">Try adjusting your search or filters.</p>
-          </div>
-  
-          <!-- Error State -->
-          <div v-else-if="projectStore.error" class="text-center py-16">
-            <div class="w-24 h-24 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-12 h-12 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              <svg v-else class="w-5 h-5 text-gray-600 dark:text-gray-400"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
               </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Failed to Load Projects</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-4">{{ projectStore.error }}</p>
-            <button 
-              @click="projectStore.fetchProjects()" 
-              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors duration-200"
-            >
-              Try Again
             </button>
           </div>
         </div>
-      </section>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref, computed, onMounted } from 'vue'
-  import { useProjectStore } from '~/stores/projectStore'
 
-  import { useProjectsPageMeta } from '~/composables/usePageMeta'
+        <!-- ── Collapsible filter panel ──────────────────────────────── -->
+        <!-- Opens as a card below the toolbar. Techs are grouped by category.
+             Much cleaner than a flat list of 20+ pills all showing at once. -->
+        <transition
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0 -translate-y-2"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-2"
+        >
+          <div v-if="filterPanelOpen"
+               class="bg-white dark:bg-gray-800 rounded-2xl border border-blue-200 dark:border-gray-600
+                      shadow-xl p-5 mb-2 animate-slide-up">
 
+            <!-- Active filter chips at top of panel -->
+            <div v-if="activeFilters.length" class="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+              <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-1">Active:</span>
+              <button
+                v-for="slug in activeFilters" :key="slug"
+                @click="removeFilter(slug)"
+                class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-600 text-white
+                       rounded-full text-xs font-medium hover:bg-blue-700 transition-colors duration-200"
+              >
+                <i v-if="getCatalogEntry(slug)?.devicon_class"
+                   :class="getCatalogEntry(slug).devicon_class"
+                   class="text-sm leading-none"></i>
+                {{ getCatalogEntry(slug)?.name ?? slug }}
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+              <button @click="clearFilters"
+                class="text-xs text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200 underline underline-offset-2 ml-1">
+                Clear all
+              </button>
+            </div>
 
-  useProjectsPageMeta()
-  
-  
-  const projectStore = useProjectStore()
-  const searchQuery = ref('')
-  const sortBy = ref('newest')
-  const viewMode = ref('grid')
-  
-  const filteredProjects = computed(() => {
-    if (!projectStore.projects) return []
-    
-    let filtered = projectStore.projects.filter(project => 
-      project.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      project.technologies?.some(tech => tech.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    )
-    
-    // Sort projects
-    switch (sortBy.value) {
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        break
-      case 'oldest':
-        filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-        break
-      case 'title':
-        filtered.sort((a, b) => a.title.localeCompare(b.title))
-        break
-    }
-    
-    return filtered
+            <!-- Grouped pills by category -->
+            <div v-if="groupedTechs.length" class="space-y-4">
+              <div v-for="group in groupedTechs" :key="group.category">
+                <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                  {{ categoryLabel(group.category) }}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="tech in group.techs" :key="tech.slug"
+                    @click="toggleFilter(tech.slug)"
+                    :class="[
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
+                      'border transition-all duration-200 hover:scale-105',
+                      activeFilters.includes(tech.slug)
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                    ]"
+                  >
+                    <i v-if="tech.devicon_class" :class="tech.devicon_class" class="text-base leading-none"></i>
+                    <img v-else-if="tech.custom_icon_url" :src="tech.custom_icon_url" :alt="tech.name" class="w-4 h-4 object-contain"/>
+                    <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    {{ tech.name }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- No techs in projects yet -->
+            <p v-else class="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+              No technologies found yet. Add some projects!
+            </p>
+          </div>
+        </transition>
+
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 animate-scroll-bounce pointer-events-none">
+        <div class="flex flex-col items-center gap-1 text-blue-500 dark:text-blue-400 opacity-70">
+          <span class="text-xs font-medium tracking-widest uppercase">Scroll</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects section -->
+    <section class="py-20">
+      <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Loading skeleton -->
+        <div v-if="projectStore.loading || techStore.loading"
+             :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
+          <div v-for="i in 6" :key="i" class="animate-pulse">
+            <div class="bg-gray-200 dark:bg-gray-700 h-64 rounded-xl mb-4"></div>
+            <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+          </div>
+        </div>
+
+        <!-- Result count + active filter summary -->
+        <div v-if="!projectStore.loading" class="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Showing <span class="font-semibold text-gray-900 dark:text-white">{{ filteredProjects.length }}</span>
+            of {{ projectStore.projects?.length ?? 0 }} projects
+            <span v-if="activeFilters.length" class="ml-1">
+              — filtered by
+              <span class="font-medium text-blue-600 dark:text-blue-400">
+                {{ activeFilters.map(s => getCatalogEntry(s)?.name ?? s).join(', ') }}
+              </span>
+            </span>
+          </p>
+          <button v-if="activeFilters.length" @click="clearFilters; filterPanelOpen = false"
+            class="text-xs text-gray-400 hover:text-red-500 transition-colors duration-200 underline underline-offset-2">
+            Clear filters
+          </button>
+        </div>
+
+        <!-- Grid / List -->
+        <div v-if="!projectStore.loading && filteredProjects.length"
+             :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
+          <div
+            v-for="(project, index) in filteredProjects" :key="project.id"
+            :style="{ animationDelay: `${index * 0.08}s` }"
+            class="group animate-fade-in-up"
+          >
+
+            <!-- Grid card -->
+            <div v-if="viewMode === 'grid'"
+                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl
+                        transition-all duration-500 transform hover:-translate-y-2 overflow-hidden
+                        border border-blue-100 dark:border-gray-700 h-full flex flex-col">
+
+              <div class="relative h-48 overflow-hidden flex-shrink-0">
+                <NuxtImg
+                  :src="project.cover_image || '/images/default_pro_cover.png'"
+                  :alt="project.title"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  @error="$event.target.src = '/images/default_pro_cover.png'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent
+                            opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute inset-0 flex items-center justify-center gap-3
+                            opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <NuxtLink :to="`/projects/${project.slug}`"
+                    class="px-4 py-2 bg-white/90 text-gray-900 rounded-lg font-semibold hover:bg-white text-sm">
+                    View Details
+                  </NuxtLink>
+                  <a v-if="project.demo_url" :href="project.demo_url" target="_blank"
+                    class="px-4 py-2 bg-blue-600/90 text-white rounded-lg font-semibold hover:bg-blue-600 text-sm">
+                    Live Demo
+                  </a>
+                </div>
+                <!-- Devicon stack top-right -->
+                <div class="absolute top-3 right-3 flex -space-x-1">
+                  <template v-for="tech in project.technologies?.slice(0, 2)" :key="tech">
+                    <div v-if="getIconClass(tech)"
+                         class="w-7 h-7 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center
+                                shadow-md border border-gray-100 dark:border-gray-700" :title="tech">
+                      <i :class="getIconClass(tech)" class="text-base leading-none"></i>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-1">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2
+                           group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                  {{ project.title }}
+                </h3>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                  <span class="px-2 py-0.5 text-xs font-medium rounded-full" :class="statusClass(project.status)">
+                    {{ project.status?.replace('_', ' ') }}
+                  </span>
+                  <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full">
+                    {{ project.type?.replace('_', ' ') }}
+                  </span>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-1 text-sm">{{ project.description }}</p>
+                <div class="flex flex-wrap gap-2 mt-auto">
+                  <span v-for="tech in project.technologies?.slice(0, 4)" :key="tech"
+                    class="inline-flex items-center gap-1.5 px-3 py-1
+                           bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30
+                           text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium
+                           border border-blue-200 dark:border-blue-700">
+                    <i v-if="getIconClass(tech)" :class="getIconClass(tech)" class="text-sm leading-none"></i>
+                    {{ tech }}
+                  </span>
+                  <span v-if="(project.technologies?.length ?? 0) > 4"
+                        class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs">
+                    +{{ project.technologies.length - 4 }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- List card -->
+            <div v-else
+                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl
+                        transition-all duration-300 overflow-hidden border border-blue-100 dark:border-gray-700 group">
+              <div class="flex flex-col md:flex-row">
+                <div class="md:w-48 h-48 md:h-32 relative overflow-hidden flex-shrink-0">
+                  <NuxtImg :src="project.cover_image || '/images/default_pro_cover.png'" :alt="project.title"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    @error="$event.target.src = '/images/default_pro_cover.png'" />
+                </div>
+                <div class="flex-1 p-6">
+                  <div class="flex justify-between items-start gap-3 mb-2">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white flex-1
+                               group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                      {{ project.title }}
+                    </h3>
+                    <div class="flex gap-2 flex-shrink-0">
+                      <NuxtLink :to="`/projects/${project.slug}`"
+                        class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Details</NuxtLink>
+                      <a v-if="project.demo_url" :href="project.demo_url" target="_blank"
+                        class="px-3 py-1 border border-blue-600 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white">Demo</a>
+                    </div>
+                  </div>
+                  <p class="text-gray-600 dark:text-gray-400 mb-3 line-clamp-2 text-sm">{{ project.description }}</p>
+                  <div class="flex flex-wrap gap-2">
+                    <span v-for="tech in project.technologies?.slice(0, 5)" :key="tech"
+                      class="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded
+                             bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30
+                             text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                      <i v-if="getIconClass(tech)" :class="getIconClass(tech)" class="text-sm leading-none"></i>
+                      {{ tech }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- No results -->
+        <div v-else-if="!projectStore.loading && !projectStore.error" class="text-center py-20">
+          <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30
+                     rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Projects Found</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">Try adjusting your search or filters.</p>
+          <button v-if="activeFilters.length" @click="clearFilters; filterPanelOpen = false"
+            class="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-200">
+            Clear Filters
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter }   from 'vue-router'
+import { useProjectStore }       from '~/stores/projectStore'
+import { useTechnologyStore }    from '~/stores/technologyStore'
+import { useTechnology }         from '~/composables/useTechnology'
+
+const route  = useRoute()
+const router = useRouter()
+
+const projectStore = useProjectStore()
+const techStore    = useTechnologyStore()
+const { getIconClass, getCustomIconUrl, filterMatches } = useTechnology()
+
+const searchQuery     = ref('')
+const sortBy          = ref('newest')
+const viewMode        = ref('grid')
+const filterPanelOpen = ref(false)
+
+// ── URL-driven active filters ─────────────────────────────────────────────────
+const activeFilters = computed({
+  get() {
+    const raw = route.query.tech
+    if (!raw) return []
+    return String(raw).split(',').map(s => s.trim()).filter(Boolean)
+  },
+  set(slugs) {
+    const q = { ...route.query }
+    if (slugs.length) q.tech = slugs.join(',')
+    else delete q.tech
+    router.replace({ query: q })
+  },
+})
+
+const toggleFilter  = (slug) => {
+  const current = [...activeFilters.value]
+  const idx = current.indexOf(slug)
+  if (idx === -1) current.push(slug)
+  else current.splice(idx, 1)
+  activeFilters.value = current
+}
+const removeFilter  = (slug) => { activeFilters.value = activeFilters.value.filter(s => s !== slug) }
+const clearFilters  = () => { activeFilters.value = [] }
+const getCatalogEntry = (slug) => techStore.catalog.find(t => t.slug === slug) ?? null
+
+// ── Grouped pills for the filter panel ───────────────────────────────────────
+// Groups available techs by their category from the catalog.
+// Only shows techs that actually appear in at least one project.
+const CATEGORY_LABELS = {
+  php: 'PHP Ecosystem', python: 'Python Ecosystem', javascript: 'JavaScript',
+  css: 'CSS / Styling', html: 'HTML', database: 'Databases',
+  devops: 'DevOps & Cloud', mobile: 'Mobile', systems: 'Systems',
+  data: 'Data / AI', other: 'Other',
+}
+
+const categoryLabel = (cat) => CATEGORY_LABELS[cat] ?? cat.charAt(0).toUpperCase() + cat.slice(1)
+
+const availableTechs = computed(() => {
+  if (!projectStore.projects?.length) return []
+  const names = new Set()
+  for (const p of projectStore.projects) {
+    for (const t of p.technologies ?? []) names.add(t)
+  }
+  const seen = new Set()
+  const pills = []
+  for (const name of names) {
+    const entry = techStore.resolve(name)
+    if (!seen.has(entry.slug)) { seen.add(entry.slug); pills.push(entry) }
+  }
+  return pills.sort((a, b) => a.name.localeCompare(b.name))
+})
+
+const groupedTechs = computed(() => {
+  const groups = {}
+  for (const tech of availableTechs.value) {
+    const cat = tech.category ?? 'other'
+    if (!groups[cat]) groups[cat] = []
+    groups[cat].push(tech)
+  }
+  // Sort categories by a preferred order
+  const order = ['php','python','javascript','css','html','database','devops','mobile','systems','data','other']
+  return Object.entries(groups)
+    .sort(([a], [b]) => {
+      const ai = order.indexOf(a); const bi = order.indexOf(b)
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+    })
+    .map(([category, techs]) => ({ category, techs }))
+})
+
+// ── Filter + sort ─────────────────────────────────────────────────────────────
+const filteredProjects = computed(() => {
+  if (!projectStore.projects) return []
+  let result = projectStore.projects.filter(project => {
+    const q = searchQuery.value.toLowerCase()
+    const textMatch = !q || project.title.toLowerCase().includes(q)
+      || project.description?.toLowerCase().includes(q)
+      || project.technologies?.some(t => t.toLowerCase().includes(q))
+    if (!textMatch) return false
+    return filterMatches(project.technologies, activeFilters.value)
   })
-  
-  // SEO
-  useHead({
-    title: 'Projects - Portfolio',
-    meta: [
-      { name: 'description', content: 'Explore my portfolio of innovative web applications, creative designs, and technical solutions showcasing modern development practices.' }
-    ]
-  })
-  
-  onMounted(async () => {
-    await projectStore.fetchProjects()
-  })
-  </script>
-  
-  <style scoped>
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(180deg); }
+  switch (sortBy.value) {
+    case 'newest': result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); break
+    case 'oldest': result.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)); break
+    case 'title':  result.sort((a, b) => a.title.localeCompare(b.title)); break
   }
-  
-  @keyframes float-delayed {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-30px) rotate(-180deg); }
-  }
-  
-  @keyframes slide-up {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes slide-up-delayed {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes fade-in-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .animate-float { animation: float 6s ease-in-out infinite; }
-  .animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
-  .animate-slide-up { animation: slide-up 0.8s ease-out; }
-  .animate-slide-up-delayed { animation: slide-up-delayed 0.8s ease-out 0.2s both; }
-  .animate-fade-in-up { animation: fade-in-up 0.6s ease-out both; }
-  
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  </style>
-  
+  return result
+})
+
+const statusClass = (s) => ({
+  'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200':     s === 'completed',
+  'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200':         s === 'in_progress',
+  'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200': s === 'planning',
+  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200':             s === 'on_hold',
+  'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200':             s === 'cancelled',
+})
+
+useHead({ title: 'Projects - Portfolio' })
+
+// Auto-open filter panel if URL already has filters (e.g. arrived via a link)
+onMounted(async () => {
+  await Promise.all([projectStore.fetchProjects(), techStore.fetchCatalog()])
+  if (activeFilters.value.length) filterPanelOpen.value = true
+})
+</script>
+
+<style scoped>
+@keyframes float         { 0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)} }
+@keyframes float-delayed { 0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)} }
+@keyframes slide-up      { from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)} }
+@keyframes slide-up-delayed { from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)} }
+@keyframes fade-in-up    { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+.animate-float            { animation: float 6s ease-in-out infinite }
+.animate-float-delayed    { animation: float-delayed 8s ease-in-out infinite }
+.animate-slide-up         { animation: slide-up 0.8s ease-out }
+.animate-slide-up-delayed { animation: slide-up-delayed 0.8s ease-out 0.2s both }
+.animate-fade-in-up       { animation: fade-in-up 0.6s ease-out both }
+.line-clamp-2 { display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden }
+</style>

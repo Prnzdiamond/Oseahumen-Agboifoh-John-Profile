@@ -68,7 +68,8 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.BACKEND_URL || 'https://oseahumen-agboifoh-john.duckdns.org/api',
       allowedHosts: [
         'oseahumen-agboifoh-john.vercel.app',
-        'oseahumen-agboifoh-john-profile-82mmpd8fy-prnzdiamonds-projects.vercel.app'
+        'oseahumen-agboifoh-john-profile-82mmpd8fy-prnzdiamonds-projects.vercel.app',
+        'http://localhost:3000',
       ]
     }
   },
@@ -94,6 +95,7 @@ export default defineNuxtConfig({
         'connect-src': [
           "'self'",
           'https://oseahumen-agboifoh-john.duckdns.org',
+          'http://localhost:8000',
           'https://www.google-analytics.com',
           'https://www.googletagmanager.com',
           'https://va.vercel-scripts.com'
@@ -122,6 +124,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
+      htmlAttrs: { lang: 'en' },
       meta: [
         { name: 'author', content: 'Oseahumen Agboifoh John' },
         { name: 'publisher', content: 'Oseahumen Agboifoh John' }
@@ -130,7 +133,9 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
-        { rel: 'manifest', href: '/site.webmanifest' }
+        { rel: 'manifest', href: '/site.webmanifest' },
+        // Devicon CSS — used by tech badges and filter pills throughout the site
+        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css' }
       ]
     }
   },

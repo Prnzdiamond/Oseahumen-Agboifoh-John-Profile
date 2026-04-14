@@ -253,11 +253,13 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useOwnerStore } from '~/stores/ownerStore'
+import { useTechnologyStore } from '~/stores/technologyStore'
 import { useFavicon } from '~/composables/useFavicon'
 import { HomeIcon, UserIcon, FolderIcon, MailIcon } from 'lucide-vue-next'
 
 const mobileMenuOpen = ref(false)
 const ownerStore = useOwnerStore()
+const techStore = useTechnologyStore()
 const route = useRoute()
 const { updateFavicon } = useFavicon()
 
@@ -316,9 +318,10 @@ watch(() => route.path, () => {
 
 // Fetch owner data when component is mounted
 onMounted(async () => {
-  if (!ownerStore.owner) {
-    await ownerStore.fetchOwner()
-  }
+  await Promise.all([
+    ownerStore.owner ? Promise.resolve() : ownerStore.fetchOwner(),
+    techStore.fetchCatalog(),
+  ])
 })
 
 // Helper function to get initials from name
