@@ -22,7 +22,7 @@
           </p>
         </div>
 
-        <!-- Search + Sort + Filter toggle row -->
+        <!-- Toolbar: search + filter + sort + view toggle -->
         <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-4 animate-slide-up-delayed">
           <div class="relative flex-1 max-w-md">
             <input
@@ -42,12 +42,12 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <!-- Filter toggle button — shows count of active filters -->
+            <!-- Filter button — badge shows total active count across all axes -->
             <button
               @click="filterPanelOpen = !filterPanelOpen"
               :class="[
                 'inline-flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-200',
-                activeFilters.length > 0
+                totalActiveFilters > 0
                   ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20'
                   : 'bg-white dark:bg-gray-800 border-blue-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400'
               ]"
@@ -57,9 +57,9 @@
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
               </svg>
               Filter
-              <span v-if="activeFilters.length"
+              <span v-if="totalActiveFilters"
                 class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-white/25 rounded-full">
-                {{ activeFilters.length }}
+                {{ totalActiveFilters }}
               </span>
               <svg :class="['w-4 h-4 transition-transform duration-200', filterPanelOpen ? 'rotate-180' : '']"
                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,8 @@
                      rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200">
               <svg v-if="viewMode === 'grid'" class="w-5 h-5 text-gray-600 dark:text-gray-400"
                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
               </svg>
               <svg v-else class="w-5 h-5 text-gray-600 dark:text-gray-400"
                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,9 +92,7 @@
           </div>
         </div>
 
-        <!-- ── Collapsible filter panel ──────────────────────────────── -->
-        <!-- Opens as a card below the toolbar. Techs are grouped by category.
-             Much cleaner than a flat list of 20+ pills all showing at once. -->
+        <!-- ── Collapsible 4-axis filter panel ─────────────────────────────── -->
         <transition
           enter-active-class="transition duration-200 ease-out"
           enter-from-class="opacity-0 -translate-y-2"
@@ -104,67 +103,175 @@
         >
           <div v-if="filterPanelOpen"
                class="bg-white dark:bg-gray-800 rounded-2xl border border-blue-200 dark:border-gray-600
-                      shadow-xl p-5 mb-2 animate-slide-up">
+                      shadow-xl p-5 mb-2">
 
-            <!-- Active filter chips at top of panel -->
-            <div v-if="activeFilters.length" class="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-              <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-1">Active:</span>
-              <button
-                v-for="slug in activeFilters" :key="slug"
-                @click="removeFilter(slug)"
+            <!-- Active chips across all axes -->
+            <div v-if="totalActiveFilters" class="flex flex-wrap items-center gap-2 mb-5 pb-4
+                                                    border-b border-gray-100 dark:border-gray-700">
+              <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-1">
+                Active:
+              </span>
+              <!-- Tech chips -->
+              <button v-for="slug in effectiveTechFilters" :key="`t-${slug}`"
+                @click="removeTechFilter(slug)"
                 class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-600 text-white
-                       rounded-full text-xs font-medium hover:bg-blue-700 transition-colors duration-200"
-              >
-                <i v-if="getCatalogEntry(slug)?.devicon_class"
-                   :class="getCatalogEntry(slug).devicon_class"
+                       rounded-full text-xs font-medium hover:bg-blue-700 transition-colors duration-200">
+                <i v-if="techEntry(slug)?.devicon_class" :class="techEntry(slug).devicon_class"
                    class="text-sm leading-none"></i>
-                {{ getCatalogEntry(slug)?.name ?? slug }}
+                {{ techEntry(slug)?.name ?? humanize(slug) }}
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
-              <button @click="clearFilters"
-                class="text-xs text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200 underline underline-offset-2 ml-1">
+              <!-- Context chips -->
+              <button v-for="slug in effectiveCtxFilters" :key="`c-${slug}`"
+                @click="removeCtxFilter(slug)"
+                class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-600 text-white
+                       rounded-full text-xs font-medium hover:bg-indigo-700 transition-colors duration-200">
+                {{ humanize(slug) }}
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+              <button @click="clearAllFilters"
+                class="text-xs text-gray-400 hover:text-red-500 dark:hover:text-red-400
+                       transition-colors duration-200 underline underline-offset-2 ml-1">
                 Clear all
               </button>
             </div>
 
-            <!-- Grouped pills by category -->
-            <div v-if="groupedTechs.length" class="space-y-4">
-              <div v-for="group in groupedTechs" :key="group.category">
-                <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
-                  {{ categoryLabel(group.category) }}
+            <div class="space-y-5">
+
+              <!-- ── Axis 1: Technologies ─────────────────────────────────── -->
+              <div v-if="groupedTechs.length">
+                <p class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3
+                           flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                  </svg>
+                  Technologies
+                </p>
+                <div class="space-y-3">
+                  <div v-for="group in groupedTechs" :key="group.category">
+                    <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                      {{ CATEGORY_LABELS[group.category] ?? humanize(group.category) }}
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                      <button v-for="tech in group.techs" :key="tech.slug"
+                        @click="toggleTechFilter(tech.slug)"
+                        :class="[
+                          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
+                          'border transition-all duration-200 hover:scale-105',
+                          effectiveTechFilters.includes(tech.slug)
+                            ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                            : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                        ]"
+                      >
+                        <i v-if="tech.devicon_class" :class="tech.devicon_class" class="text-base leading-none"></i>
+                        <img v-else-if="tech.custom_icon_url" :src="tech.custom_icon_url" :alt="tech.name" class="w-4 h-4 object-contain"/>
+                        <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                        {{ tech.name }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Divider -->
+              <div v-if="groupedTechs.length && (filterStore.meta.industries.length || filterStore.meta.types.length || filterStore.meta.tags.length)"
+                   class="border-t border-gray-100 dark:border-gray-700"></div>
+
+              <!-- ── Axis 2: Industry ────────────────────────────────────── -->
+              <div v-if="filterStore.meta.industries.length">
+                <p class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3
+                           flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                  </svg>
+                  Industry
                 </p>
                 <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="tech in group.techs" :key="tech.slug"
-                    @click="toggleFilter(tech.slug)"
+                  <button v-for="ind in filterStore.meta.industries" :key="ind"
+                    @click="toggleCtxFilter(ind)"
                     :class="[
                       'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
                       'border transition-all duration-200 hover:scale-105',
-                      activeFilters.includes(tech.slug)
-                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                      effectiveCtxFilters.includes(ind)
+                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
+                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
                     ]"
                   >
-                    <i v-if="tech.devicon_class" :class="tech.devicon_class" class="text-base leading-none"></i>
-                    <img v-else-if="tech.custom_icon_url" :src="tech.custom_icon_url" :alt="tech.name" class="w-4 h-4 object-contain"/>
-                    <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                    </svg>
-                    {{ tech.name }}
+                    {{ humanize(ind) }}
                   </button>
                 </div>
               </div>
-            </div>
 
-            <!-- No techs in projects yet -->
-            <p v-else class="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
-              No technologies found yet. Add some projects!
-            </p>
+              <!-- ── Axis 3: Project Type ────────────────────────────────── -->
+              <div v-if="filterStore.meta.types.length">
+                <p class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-3
+                           flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+                  </svg>
+                  Project Type
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <button v-for="type in filterStore.meta.types" :key="type"
+                    @click="toggleCtxFilter(type.replace(/_/g, '-'))"
+                    :class="[
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
+                      'border transition-all duration-200 hover:scale-105',
+                      effectiveCtxFilters.includes(type.replace(/_/g, '-')) || effectiveCtxFilters.includes(type)
+                        ? 'bg-purple-600 border-purple-600 text-white shadow-sm'
+                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+                    ]"
+                  >
+                    {{ humanize(type.replace(/_/g, '-')) }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── Axis 4: Feature Tags ────────────────────────────────── -->
+              <div v-if="filterStore.meta.tags.length">
+                <p class="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-3
+                           flex items-center gap-2">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                  </svg>
+                  Features
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <button v-for="tag in filterStore.meta.tags" :key="tag"
+                    @click="toggleCtxFilter(tag)"
+                    :class="[
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium',
+                      'border transition-all duration-200 hover:scale-105',
+                      effectiveCtxFilters.includes(tag)
+                        ? 'bg-teal-600 border-teal-600 text-white shadow-sm'
+                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/20'
+                    ]"
+                  >
+                    {{ humanize(tag) }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Empty filter panel -->
+              <p v-if="!groupedTechs.length && !filterStore.meta.industries.length &&
+                        !filterStore.meta.types.length && !filterStore.meta.tags.length"
+                 class="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+                No filter options yet. Add some projects with technologies, industry, and tags!
+              </p>
+
+            </div>
           </div>
         </transition>
-
       </div>
 
       <!-- Scroll indicator -->
@@ -182,7 +289,7 @@
     <section class="py-20">
       <div class="max-w-7xl mx-auto px-6">
 
-        <!-- Loading skeleton -->
+        <!-- Loading -->
         <div v-if="projectStore.loading || techStore.loading"
              :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
           <div v-for="i in 6" :key="i" class="animate-pulse">
@@ -192,33 +299,50 @@
           </div>
         </div>
 
-        <!-- Result count + active filter summary -->
+        <!-- Result count + session filter indicator -->
         <div v-if="!projectStore.loading" class="mb-6 flex flex-wrap items-center justify-between gap-3">
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            Showing <span class="font-semibold text-gray-900 dark:text-white">{{ filteredProjects.length }}</span>
+            Showing
+            <span class="font-semibold text-gray-900 dark:text-white">{{ sortedProjects.length }}</span>
             of {{ projectStore.projects?.length ?? 0 }} projects
-            <span v-if="activeFilters.length" class="ml-1">
+            <template v-if="totalActiveFilters && !filterStore.isViewingAll">
               — filtered by
               <span class="font-medium text-blue-600 dark:text-blue-400">
-                {{ activeFilters.map(s => getCatalogEntry(s)?.name ?? s).join(', ') }}
+                {{ activeFilterLabel }}
               </span>
-            </span>
+            </template>
+            <template v-else-if="filterStore.hasSessionFilter && filterStore.isViewingAll">
+              — <span class="italic text-gray-400">filter paused (view all mode)</span>
+            </template>
           </p>
-          <button v-if="activeFilters.length" @click="clearFilters; filterPanelOpen = false"
-            class="text-xs text-gray-400 hover:text-red-500 transition-colors duration-200 underline underline-offset-2">
-            Clear filters
-          </button>
+
+          <div class="flex items-center gap-3">
+            <!-- View All — temporarily shows all without clearing session filter -->
+            <button v-if="!filterStore.isViewingAll && filterStore.hasSessionFilter && !totalActiveFilters"
+              @click="filterStore.viewAll()"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              ← Re-apply saved filter
+            </button>
+            <button v-if="filterStore.isViewingAll"
+              @click="filterStore.isViewingAll = false"
+              class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              Re-apply session filter
+            </button>
+            <button v-if="totalActiveFilters" @click="clearAllFilters"
+              class="text-xs text-gray-400 hover:text-red-500 transition-colors duration-200 underline underline-offset-2">
+              Clear filters
+            </button>
+          </div>
         </div>
 
         <!-- Grid / List -->
-        <div v-if="!projectStore.loading && filteredProjects.length"
+        <div v-if="!projectStore.loading && sortedProjects.length"
              :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'">
           <div
-            v-for="(project, index) in filteredProjects" :key="project.id"
+            v-for="(project, index) in sortedProjects" :key="project.id"
             :style="{ animationDelay: `${index * 0.08}s` }"
             class="group animate-fade-in-up"
           >
-
             <!-- Grid card -->
             <div v-if="viewMode === 'grid'"
                  class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl
@@ -245,7 +369,7 @@
                     Live Demo
                   </a>
                 </div>
-                <!-- Devicon stack top-right -->
+                <!-- Devicon stack -->
                 <div class="absolute top-3 right-3 flex -space-x-1">
                   <template v-for="tech in project.technologies?.slice(0, 2)" :key="tech">
                     <div v-if="getIconClass(tech)"
@@ -266,8 +390,9 @@
                   <span class="px-2 py-0.5 text-xs font-medium rounded-full" :class="statusClass(project.status)">
                     {{ project.status?.replace('_', ' ') }}
                   </span>
-                  <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full">
-                    {{ project.type?.replace('_', ' ') }}
+                  <span v-if="project.industry"
+                        class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 text-xs font-medium rounded-full">
+                    {{ humanize(project.industry) }}
                   </span>
                 </div>
                 <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-1 text-sm">{{ project.description }}</p>
@@ -333,12 +458,13 @@
           <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30
                      rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-12 h-12 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Projects Found</h3>
           <p class="text-gray-600 dark:text-gray-400 mb-6">Try adjusting your search or filters.</p>
-          <button v-if="activeFilters.length" @click="clearFilters; filterPanelOpen = false"
+          <button v-if="totalActiveFilters" @click="clearAllFilters"
             class="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-200">
             Clear Filters
           </button>
@@ -350,127 +476,244 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter }   from 'vue-router'
-import { useProjectStore }       from '~/stores/projectStore'
-import { useTechnologyStore }    from '~/stores/technologyStore'
-import { useTechnology }         from '~/composables/useTechnology'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useProjectStore }    from '~/stores/projectStore'
+import { useTechnologyStore } from '~/stores/technologyStore'
+import { useFilterStore }     from '~/stores/filterStore'
+import { useTechnology }      from '~/composables/useTechnology'
 
 const route  = useRoute()
 const router = useRouter()
 
 const projectStore = useProjectStore()
 const techStore    = useTechnologyStore()
-const { getIconClass, getCustomIconUrl, filterMatches } = useTechnology()
+const filterStore  = useFilterStore()
+const { getIconClass, getCustomIconUrl } = useTechnology()
 
 const searchQuery     = ref('')
 const sortBy          = ref('newest')
 const viewMode        = ref('grid')
 const filterPanelOpen = ref(false)
 
-// ── URL-driven active filters ─────────────────────────────────────────────────
-const activeFilters = computed({
-  get() {
-    const raw = route.query.tech
-    if (!raw) return []
-    return String(raw).split(',').map(s => s.trim()).filter(Boolean)
-  },
-  set(slugs) {
-    const q = { ...route.query }
-    if (slugs.length) q.tech = slugs.join(',')
-    else delete q.tech
-    router.replace({ query: q })
-  },
+// ── Tech filter state — synced to URL query param ?tech= ──────────────────────
+const activeTechFilters = computed({
+    get() {
+        const raw = route.query.tech
+        if (!raw) return []
+        return String(raw).split(',').map(s => s.trim()).filter(Boolean)
+    },
+    set(slugs) {
+        const q = { ...route.query }
+        if (slugs.length) q.tech = slugs.join(',')
+        else delete q.tech
+        router.replace({ query: q })
+        // Persist to session filter
+        filterStore.setSessionFilter(slugs, activeCtxFilters.value)
+    },
 })
 
-const toggleFilter  = (slug) => {
-  const current = [...activeFilters.value]
-  const idx = current.indexOf(slug)
-  if (idx === -1) current.push(slug)
-  else current.splice(idx, 1)
-  activeFilters.value = current
-}
-const removeFilter  = (slug) => { activeFilters.value = activeFilters.value.filter(s => s !== slug) }
-const clearFilters  = () => { activeFilters.value = [] }
-const getCatalogEntry = (slug) => techStore.catalog.find(t => t.slug === slug) ?? null
+// ── Context filter state — synced to URL query param ?ctx= ────────────────────
+const activeCtxFilters = computed({
+    get() {
+        const raw = route.query.ctx
+        if (!raw) return []
+        return String(raw).split(',').map(s => s.trim()).filter(Boolean)
+    },
+    set(slugs) {
+        const q = { ...route.query }
+        if (slugs.length) q.ctx = slugs.join(',')
+        else delete q.ctx
+        router.replace({ query: q })
+        // Persist to session filter
+        filterStore.setSessionFilter(activeTechFilters.value, slugs)
+    },
+})
 
-// ── Grouped pills for the filter panel ───────────────────────────────────────
-// Groups available techs by their category from the catalog.
-// Only shows techs that actually appear in at least one project.
+const totalActiveFilters = computed(() => effectiveTechFilters.value.length + effectiveCtxFilters.value.length)
+
+// ── Effective filters — URL params take precedence, fall back to sessionFilter ─
+// This enables the clean-URL approach: session filter is silently applied from the
+// store without writing ?tech=...&ctx=... back to the address bar.
+const effectiveTechFilters = computed(() => {
+    if (filterStore.isViewingAll) return []
+    return activeTechFilters.value.length
+        ? activeTechFilters.value
+        : filterStore.sessionFilter.tech
+})
+const effectiveCtxFilters = computed(() => {
+    if (filterStore.isViewingAll) return []
+    return activeCtxFilters.value.length
+        ? activeCtxFilters.value
+        : filterStore.sessionFilter.context
+})
+
+// ── Filter toggle helpers ─────────────────────────────────────────────────────
+const toggleTechFilter = (slug) => {
+    const current = [...effectiveTechFilters.value]
+    const idx = current.indexOf(slug)
+    if (idx === -1) current.push(slug)
+    else current.splice(idx, 1)
+    activeTechFilters.value = current
+}
+
+const toggleCtxFilter = (slug) => {
+    const current = [...effectiveCtxFilters.value]
+    const idx = current.indexOf(slug)
+    if (idx === -1) current.push(slug)
+    else current.splice(idx, 1)
+    activeCtxFilters.value = current
+}
+
+const removeTechFilter = (slug) => {
+    activeTechFilters.value = effectiveTechFilters.value.filter(s => s !== slug)
+}
+const removeCtxFilter = (slug) => {
+    activeCtxFilters.value = effectiveCtxFilters.value.filter(s => s !== slug)
+}
+const clearAllFilters = () => {
+    activeTechFilters.value = []
+    activeCtxFilters.value  = []
+    filterStore.clearSessionFilter()
+    filterPanelOpen.value   = false
+}
+
+// ── Display helpers ───────────────────────────────────────────────────────────
+const techEntry = (slug) => techStore.catalog.find(t => t.slug === slug) ?? null
+
 const CATEGORY_LABELS = {
-  php: 'PHP Ecosystem', python: 'Python Ecosystem', javascript: 'JavaScript',
-  css: 'CSS / Styling', html: 'HTML', database: 'Databases',
-  devops: 'DevOps & Cloud', mobile: 'Mobile', systems: 'Systems',
-  data: 'Data / AI', other: 'Other',
+    php: 'PHP Ecosystem', python: 'Python Ecosystem', javascript: 'JavaScript',
+    css: 'CSS / Styling', html: 'HTML', database: 'Databases',
+    devops: 'DevOps & Cloud', mobile: 'Mobile', systems: 'Systems',
+    data: 'Data / AI', other: 'Other',
 }
 
-const categoryLabel = (cat) => CATEGORY_LABELS[cat] ?? cat.charAt(0).toUpperCase() + cat.slice(1)
+const humanize = (slug) =>
+    slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 
+// Available tech pills — only techs that appear in at least one project
 const availableTechs = computed(() => {
-  if (!projectStore.projects?.length) return []
-  const names = new Set()
-  for (const p of projectStore.projects) {
-    for (const t of p.technologies ?? []) names.add(t)
-  }
-  const seen = new Set()
-  const pills = []
-  for (const name of names) {
-    const entry = techStore.resolve(name)
-    if (!seen.has(entry.slug)) { seen.add(entry.slug); pills.push(entry) }
-  }
-  return pills.sort((a, b) => a.name.localeCompare(b.name))
+    if (!projectStore.projects?.length) return []
+    const names = new Set()
+    for (const p of projectStore.projects) {
+        for (const t of p.technologies ?? []) names.add(t)
+    }
+    const seen = new Set()
+    const pills = []
+    for (const name of names) {
+        const entry = techStore.resolve(name)
+        if (!seen.has(entry.slug)) { seen.add(entry.slug); pills.push(entry) }
+    }
+    return pills.sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const groupedTechs = computed(() => {
-  const groups = {}
-  for (const tech of availableTechs.value) {
-    const cat = tech.category ?? 'other'
-    if (!groups[cat]) groups[cat] = []
-    groups[cat].push(tech)
-  }
-  // Sort categories by a preferred order
-  const order = ['php','python','javascript','css','html','database','devops','mobile','systems','data','other']
-  return Object.entries(groups)
-    .sort(([a], [b]) => {
-      const ai = order.indexOf(a); const bi = order.indexOf(b)
-      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
-    })
-    .map(([category, techs]) => ({ category, techs }))
+    const groups = {}
+    for (const tech of availableTechs.value) {
+        const cat = tech.category ?? 'other'
+        if (!groups[cat]) groups[cat] = []
+        groups[cat].push(tech)
+    }
+    const order = ['php','python','javascript','css','html','database','devops','mobile','systems','data','other']
+    return Object.entries(groups)
+        .sort(([a], [b]) => {
+            const ai = order.indexOf(a); const bi = order.indexOf(b)
+            return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+        })
+        .map(([category, techs]) => ({ category, techs }))
 })
 
-// ── Filter + sort ─────────────────────────────────────────────────────────────
+const activeFilterLabel = computed(() => {
+    const parts = []
+    if (effectiveTechFilters.value.length) {
+        parts.push(effectiveTechFilters.value
+            .map(s => techEntry(s)?.name ?? humanize(s))
+            .join(', '))
+    }
+    if (effectiveCtxFilters.value.length) {
+        parts.push(effectiveCtxFilters.value.map(humanize).join(', '))
+    }
+    return parts.join(' / ')
+})
+
+// ── Filtered + sorted projects ────────────────────────────────────────────────
+// Uses filterStore.getFilteredProjects for memoized filtering.
+// When isViewingAll is true, shows all projects regardless of filters.
+
 const filteredProjects = computed(() => {
-  if (!projectStore.projects) return []
-  let result = projectStore.projects.filter(project => {
-    const q = searchQuery.value.toLowerCase()
-    const textMatch = !q || project.title.toLowerCase().includes(q)
-      || project.description?.toLowerCase().includes(q)
-      || project.technologies?.some(t => t.toLowerCase().includes(q))
-    if (!textMatch) return false
-    return filterMatches(project.technologies, activeFilters.value)
-  })
-  switch (sortBy.value) {
-    case 'newest': result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); break
-    case 'oldest': result.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)); break
-    case 'title':  result.sort((a, b) => a.title.localeCompare(b.title)); break
-  }
-  return result
+    if (!projectStore.projects) return []
+
+    // isViewingAll: show everything (but session filter is preserved for next visit)
+    if (filterStore.isViewingAll) {
+        return projectStore.projects
+    }
+
+    // Apply effective filters (URL params if set, otherwise session filter — clean URL approach)
+    const techF = effectiveTechFilters.value
+    const ctxF  = effectiveCtxFilters.value
+
+    return filterStore.getFilteredProjects(
+        projectStore.projects.filter(p => {
+            const q = searchQuery.value.toLowerCase()
+            return !q ||
+                p.title.toLowerCase().includes(q) ||
+                p.description?.toLowerCase().includes(q) ||
+                p.technologies?.some(t => t.toLowerCase().includes(q))
+        }),
+        techF,
+        ctxF,
+        techStore
+    )
+})
+
+const sortedProjects = computed(() => {
+    const list = [...filteredProjects.value]
+    switch (sortBy.value) {
+        case 'newest': list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); break
+        case 'oldest': list.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)); break
+        case 'title':  list.sort((a, b) => a.title.localeCompare(b.title)); break
+    }
+    return list
 })
 
 const statusClass = (s) => ({
-  'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200':     s === 'completed',
-  'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200':         s === 'in_progress',
-  'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200': s === 'planning',
-  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200':             s === 'on_hold',
-  'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200':             s === 'cancelled',
+    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200':     s === 'completed',
+    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200':         s === 'in_progress',
+    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200': s === 'planning',
+    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200':             s === 'on_hold',
+    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200':             s === 'cancelled',
 })
+
+// ── Session filter restore ────────────────────────────────────────────────────
+// When user navigates back to /projects, re-apply the session filter
+// (unless they're already in isViewingAll mode).
+// Also clear result cache when project store refreshes.
+watch(() => projectStore.lastFetched, () => filterStore.clearResultCache())
 
 useHead({ title: 'Projects - Portfolio' })
 
-// Auto-open filter panel if URL already has filters (e.g. arrived via a link)
 onMounted(async () => {
-  await Promise.all([projectStore.fetchProjects(), techStore.fetchCatalog()])
-  if (activeFilters.value.length) filterPanelOpen.value = true
+    const config = useRuntimeConfig()
+
+    await Promise.all([
+        projectStore.fetchProjects(),
+        techStore.fetchCatalog(),
+        filterStore.fetchMeta(config.public.apiBaseUrl),
+    ])
+
+    // If the user explicitly clicked "View All" before navigating here,
+    // respect that intent — skip the session restore entirely.
+    // effectiveTechFilters/effectiveCtxFilters will return [] while isViewingAll=true,
+    // so displayedProjects shows everything.
+    if (filterStore.isViewingAll) return
+
+    // Normal navigation: reset the viewing-all override (no-op if already false).
+    filterStore.resetViewAll()
+
+    // Session filter is now active via effectiveTechFilters/effectiveCtxFilters.
+    // The URL stays clean — no router.replace() here.
+    // If the user opens the filter panel, toggleTechFilter/toggleCtxFilter will
+    // promote the session filter into the URL at that point.
 })
 </script>
 

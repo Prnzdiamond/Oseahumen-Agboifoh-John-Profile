@@ -9,9 +9,11 @@
 import { useTheme } from '~/composables/useTheme'
 import { Analytics } from '@vercel/analytics/nuxt'
 import { useOwnerStore } from '~/stores/ownerStore'
+import { useFilterStore } from '~/stores/filterStore'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const ownerStore = useOwnerStore()
+const filterStore = useFilterStore()
 const isOwnerLoaded = ref(false)
 
 // Base SEO configuration
@@ -283,6 +285,7 @@ watch(owner, (newOwner) => {
 
 // Client-side initialization
 onMounted(async () => {
+  filterStore.init()
   // Initialize theme first (synchronous)
   initTheme()
   setupSystemWatcher()

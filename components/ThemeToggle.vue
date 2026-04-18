@@ -86,9 +86,9 @@ import { computed, onMounted } from 'vue'
 const { currentTheme, setTheme, initTheme, setupSystemWatcher } = useTheme()
 
 const themes = [
-  { value: 'light', icon: '☀️', label: 'Light' },
-  { value: 'dark', icon: '🌙', label: 'Dark' },
-  { value: 'system', icon: '🖥️', label: 'System' }
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
 ]
 
 const currentThemeData = computed(() => 

@@ -252,6 +252,7 @@
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -270,6 +271,7 @@ import { useContactPageMeta } from '~/composables/usePageMeta'
 useContactPageMeta()
 
 const ownerStore = useOwnerStore()
+
 
 // SEO
 useHead({

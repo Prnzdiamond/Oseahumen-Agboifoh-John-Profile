@@ -125,6 +125,16 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       htmlAttrs: { lang: 'en' },
+      // This synchronous (no async/defer) script runs BEFORE the browser
+      // paints anything.  It reads the theme cookie and adds/removes the
+      // `dark` class on <html> so the correct colour scheme is applied on
+      // the very first frame — eliminating the light-mode flash entirely.
+      script: [
+        {
+          innerHTML: `(function(){try{var c=document.cookie.split(';');for(var i=0;i<c.length;i++){var p=c[i].trim().split('=');if(p[0]==='theme'){var t=decodeURIComponent(p[1]);if(t==='dark'){document.documentElement.classList.add('dark')}else if(t==='light'){document.documentElement.classList.remove('dark')}else{if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}return}}if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          tagPriority: 'critical',
+        }
+      ],
       meta: [
         { name: 'author', content: 'Oseahumen Agboifoh John' },
         { name: 'publisher', content: 'Oseahumen Agboifoh John' }

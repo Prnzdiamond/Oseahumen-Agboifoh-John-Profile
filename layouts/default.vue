@@ -24,11 +24,11 @@
               </div>
               <div class="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
             </div>
-            <div class="hidden sm:block">
-              <span class="text-xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+            <div class="hidden sm:block min-w-0">
+              <span class="text-xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent block truncate max-w-[200px] lg:max-w-xs">
                 {{ owner?.name || 'Portfolio' }}
               </span>
-              <div class="text-xs text-gray-500 dark:text-gray-400 -mt-1">
+              <div class="text-xs text-gray-500 dark:text-gray-400 -mt-1 truncate max-w-[200px] lg:max-w-xs">
                 {{ owner?.headline || 'Professional Portfolio' }}
               </div>
             </div>
@@ -280,24 +280,26 @@ const owner = computed(() => ownerStore.owner)
 // Enhanced active link detection with project highlighting
 const isActiveLink = (linkPath) => {
   const currentPath = route.path
-  
-  // Exact match for home
-  if (linkPath === '/' && currentPath === '/') {
-    return true
-  }
-  
-  // For projects, highlight both /projects and individual project pages
+
+  if (linkPath === '/' && currentPath === '/') return true
+
   if (linkPath === '/projects') {
-    return currentPath === '/projects' || currentPath.startsWith('/projects/')
+    // Highlight for /projects, /projects/slug, AND any filter route
+    // like /laravel, /laravel/real-estate, /real-estate etc.
+    // Filter routes are anything that isn't /, /about, or /contact.
+    if (currentPath === '/projects' || currentPath.startsWith('/projects/')) return true
+    const knownRoutes = ['/', '/about', '/contact']
+    if (!knownRoutes.some(r => currentPath === r || currentPath.startsWith(r + '/'))) {
+      return true
+    }
+    return false
   }
-  
-  // For other pages, check if current path starts with link path
-  if (linkPath !== '/') {
-    return currentPath.startsWith(linkPath)
-  }
-  
+
+  if (linkPath !== '/') return currentPath.startsWith(linkPath)
+
   return false
 }
+
 
 // Update favicon when owner avatar changes
 watch(owner, (newOwner) => {
