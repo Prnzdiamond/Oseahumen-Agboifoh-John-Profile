@@ -27,7 +27,7 @@
             <OrbitingIcons v-if="ownerStore.owner?.tech_stack?.length > 2" :techStack="ownerStore.owner.tech_stack" />
             <!-- Avatar centered inside the orbit -->
             <div class="relative w-40 h-40 mx-auto group">
-              <NuxtImg :src="ownerStore.owner.avatar || '/images/default_avatar.png'" :alt="ownerStore.owner.name"
+              <img :src="ownerStore.owner?.avatar || '/images/default_avatar.png'" :alt="ownerStore.owner?.name"
                 class="w-full h-full rounded-full object-cover shadow-2xl border-4 border-white dark:border-gray-800 group-hover:scale-105 transition-transform duration-500 animate-zoom-in" />
               <div
                 class="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-all duration-500">
@@ -301,11 +301,11 @@
                       </div>
                       <span
                         class="text-gray-700 dark:text-gray-300 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">{{
-                        language.language }}</span>
+                          language.language }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-sm text-gray-500 dark:text-gray-400 capitalize">{{ language.proficiency
-                        }}</span>
+                      }}</span>
                       <span v-if="language.is_native"
                         class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs rounded-full animate-pulse">Native</span>
                     </div>
@@ -342,7 +342,7 @@
                         <div v-if="hobby.description"
                           class="text-sm text-gray-600 dark:text-gray-400 mt-1 transition-all duration-300"
                           :class="expandedHobbies.includes(index) ? 'line-clamp-none' : 'line-clamp-1'">{{
-                          hobby.description }}</div>
+                            hobby.description }}</div>
                       </div>
                     </div>
                   </div>

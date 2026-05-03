@@ -90,7 +90,8 @@ export default defineNuxtConfig({
           ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
           'https://www.googletagmanager.com',
           'https://www.google-analytics.com',
-          'https://va.vercel-scripts.com'
+          'https://va.vercel-scripts.com',
+          'https://vercel.live'
         ],
         'connect-src': [
           "'self'",
