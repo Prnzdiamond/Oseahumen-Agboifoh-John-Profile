@@ -48,7 +48,7 @@ export default defineNuxtConfig({
   ,
   image: {
     provider: 'ipx',
-    domains: ['res.cloudinary.com'],
+    domains: ['oseahumen-agboifoh-john.duckdns.org'],
     quality: 80,
     format: ['webp', 'avif'],
     screens: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280 }
@@ -80,8 +80,8 @@ export default defineNuxtConfig({
         'img-src': [
           "'self'",
           'data:',
-          'https://res.cloudinary.com',
-          'https://*.cloudinary.com',
+          
+          'https://oseahumen-agboifoh-john.duckdns.org',
           'https://www.googletagmanager.com'
         ],
         'script-src': [
