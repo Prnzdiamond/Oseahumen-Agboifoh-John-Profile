@@ -120,8 +120,15 @@ const doSwap = () => {
 }
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
+// initSlots() is deterministic and safe to run during SSR (so the icons appear
+// in the server HTML). The interval timers are browser-only — starting them on
+// the server throws ("setInterval should not be used on the server"), which is
+// why this is guarded. stopAll() first makes startAll idempotent: the immediate
+// watcher and onMounted can both call it without leaking duplicate intervals.
 const startAll = () => {
+  stopAll()
   initSlots()
+  if (!import.meta.client) return
   depthTimer = setInterval(updateDepth, 100)
   swapTimer = setInterval(doSwap, props.intervalMs)
 }

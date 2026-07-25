@@ -1,6 +1,7 @@
 // stores/technologyStore.js
 import { defineStore } from 'pinia'
 import { $fetch } from 'ofetch'
+import { withServerToken } from '~/utils/withServerToken'
 
 export const useTechnologyStore = defineStore('technology', {
     state: () => ({
@@ -57,7 +58,9 @@ export const useTechnologyStore = defineStore('technology', {
 
             try {
                 const config   = useRuntimeConfig()
-                const response = await $fetch(`${config.public.apiBaseUrl}/technologies`)
+                const response = await $fetch(`${config.public.apiBaseUrl}/technologies`, {
+                    headers: withServerToken(config)
+                })
                 if (response.success) {
                     this.catalog     = response.data ?? []
                     this.lastFetched = Date.now()

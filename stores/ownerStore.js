@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { useRuntimeConfig } from "#app"
 import { $fetch } from "ofetch"
+import { withServerToken } from "~/utils/withServerToken"
 
 export const useOwnerStore = defineStore("owner", {
     state: () => ({
@@ -51,10 +52,7 @@ export const useOwnerStore = defineStore("owner", {
             try {
                 const config = useRuntimeConfig();
                 const response = await $fetch(`${config.public.apiBaseUrl}/owner`, {
-                    headers: {
-                        'Cache-Control': 'max-age=300' // 5 minutes
-                    },
-                   
+                    headers: withServerToken(config, { 'Cache-Control': 'max-age=300' }) // 5 minutes
                 });
 
                 if (response.success) {

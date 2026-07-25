@@ -64,6 +64,10 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Private — server-only. Undefined on the client, so it can never leak into
+    // the bundle. Sent as X-Server-Token on SSR/sitemap fetches so the backend
+    // origin gate trusts server-to-server calls that carry no browser Origin.
+    apiServerToken: process.env.API_SERVER_TOKEN || '',
     public: {
       apiBaseUrl: process.env.BACKEND_URL || 'https://oseahumen-agboifoh-john.duckdns.org/api',
       allowedHosts: [
@@ -113,6 +117,19 @@ export default defineNuxtConfig({
         'script-src-attr': ["'none'"],
       }
     }
+  },
+
+  // Edge caching (ISR on Vercel). Each render fetches the self-hosted Oracle
+  // backend, so cache pages and revalidate hourly rather than round-tripping on
+  // every crawl/visit. The backend already caches forever and busts on save, so
+  // a 1h edge TTL adds no staleness beyond the existing queue-warm delay.
+  routeRules: {
+    '/':             { isr: 3600 },
+    '/about':        { isr: 3600 },
+    '/projects':     { isr: 3600 },
+    '/projects/**':  { isr: 3600 },
+    // Sitemap source hits the backend live — never cache it.
+    '/api/**':       { cache: false },
   },
 
   nitro: {

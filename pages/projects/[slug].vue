@@ -400,64 +400,66 @@ const handleKeydown = (e) => {
   if (e.key === 'ArrowRight')  nextImage()
 }
 
+// Keydown listener is client-only — safe to leave in onMounted.
 onMounted(() => document.addEventListener('keydown', handleKeydown))
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
   document.body.style.overflow = 'auto'
 })
 
-// ── SEO + JSON-LD ─────────────────────────────────────────────────────────────
+// ── Data fetch (SSR) ──────────────────────────────────────────────────────────
+// Fetch at setup, not onMounted, so the project renders into the server HTML.
+// useAsyncData blocks SSR until the store is populated and dedupes the request
+// on the client (Pinia state hydrates from the payload — no refetch on load).
 const siteUrl = 'https://oseahumen-agboifoh-john.vercel.app'
 
-onMounted(async () => {
+await useAsyncData(`project:${route.params.slug}`, async () => {
   await Promise.all([
     projectStore.fetchProject(route.params.slug),
     techStore.fetchCatalog(),
   ])
+  return projectStore.project ?? null
+})
 
-  if (!projectStore.project) return
+// Unknown slug → a real 404 (status code + noindex), not a soft 200.
+if (!projectStore.project) {
+  throw createError({ statusCode: 404, statusMessage: 'Project not found', fatal: true })
+}
 
-  const p = projectStore.project
+const p = projectStore.project
 
-  // Dynamic meta tags
-  useProjectPageMeta(p)
+// ── SEO + JSON-LD (rendered server-side) ──────────────────────────────────────
+useProjectPageMeta(p)
 
-  // SoftwareApplication JSON-LD structured data
-  // This is what gets you rich results in Google Search
-  useHead({
-    script: [{
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'SoftwareApplication',
-        'name': p.title,
-        'description': p.description,
-        'applicationCategory': 'WebApplication',
-        'operatingSystem': 'Web',
-        'url': p.demo_url || `${siteUrl}/projects/${p.slug}`,
-        'image': p.cover_image || `${siteUrl}/images/default_pro_cover.png`,
-        'dateCreated': p.created_at,
-        'dateModified': p.updated_at,
-        ...(p.completion_date ? { 'datePublished': p.completion_date } : {}),
-        'programmingLanguage': p.technologies ?? [],
-        ...(p.demo_url ? { 'installUrl': p.demo_url } : {}),
-        ...(p.primary_source_url ? {
-          'codeRepository': p.primary_source_url,
-          'downloadUrl': p.primary_source_url,
-        } : {}),
-        'author': {
-          '@type': 'Person',
-          'name': 'Oseahumen Agboifoh John',
-          'url': siteUrl,
-        },
-        'offers': {
-          '@type': 'Offer',
-          'price': '0',
-          'priceCurrency': 'USD',
-        },
-      }),
-    }],
-  })
+// SoftwareApplication JSON-LD — what earns rich results in Google Search.
+useHead({
+  script: [{
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      'name': p.title,
+      'description': p.description,
+      'applicationCategory': 'WebApplication',
+      'operatingSystem': 'Web',
+      'url': p.demo_url || `${siteUrl}/projects/${p.slug}`,
+      'image': p.cover_image || `${siteUrl}/images/default_pro_cover.png`,
+      'dateCreated': p.created_at,
+      'dateModified': p.updated_at,
+      ...(p.completion_date ? { 'datePublished': p.completion_date } : {}),
+      'programmingLanguage': p.technologies ?? [],
+      ...(p.demo_url ? { 'installUrl': p.demo_url } : {}),
+      ...(p.primary_source_url ? {
+        'codeRepository': p.primary_source_url,
+        'downloadUrl': p.primary_source_url,
+      } : {}),
+      'author': {
+        '@type': 'Person',
+        'name': 'Oseahumen Agboifoh John',
+        'url': siteUrl,
+      },
+    }),
+  }],
 })
 
 onUnmounted(() => projectStore.clearProject())

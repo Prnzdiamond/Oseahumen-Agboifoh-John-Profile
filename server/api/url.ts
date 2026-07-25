@@ -1,4 +1,6 @@
-import { defineSitemapEventHandler } from "#imports";
+// defineSitemapEventHandler and useRuntimeConfig are auto-imported by Nuxt /
+// @nuxtjs/sitemap in the Nitro server context — importing the former from
+// "#imports" trips a type-resolution miss, so rely on the auto-import instead.
 import type { SitemapUrlInput } from "#sitemap/types";
 import { $fetch } from 'ofetch';
 
@@ -18,9 +20,14 @@ type ProjectResponse = {
 }
 
 export default defineSitemapEventHandler(async () => {
-    const response: ProjectResponse = await $fetch("https://oseahumen-agboifoh-john.duckdns.org/api/projects", {
+    // Runs server-side at prerender/build. Use the same runtime config as the
+    // app (so a local BACKEND_URL is honoured) and authenticate as a trusted
+    // server-to-server caller with X-Server-Token — the backend origin gate
+    // rejects header-bearing requests that carry no valid token.
+    const config = useRuntimeConfig();
+    const response: ProjectResponse = await $fetch(`${config.public.apiBaseUrl}/projects`, {
         headers: {
-            'X-Bypass-Sitemap': process.env.NUXT_SITEMAP_SECRET ?? ""
+            'X-Server-Token': config.apiServerToken as string
         }
     });
 

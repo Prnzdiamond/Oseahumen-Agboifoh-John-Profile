@@ -87,9 +87,11 @@ useHead({
     { name: 'theme-color', content: '#3B82F6' },
   ],
   link: [
-    // Canonical URL
-    { rel: 'canonical', href: siteUrl },
-    
+    // NOTE: no global canonical here. A site-wide canonical pointing at siteUrl
+    // silently canonicalises every page to the homepage unless each page
+    // overrides it — which is exactly the bug this removal fixes. Each page now
+    // sets its own canonical via usePageMeta / its own useHead.
+
     // Favicon and app icons
     { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
     { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
@@ -157,6 +159,23 @@ useHead({
     })
   },
 
+  // BREADCRUMB and FAQ schema are homepage-only — see the route-scoped useHead
+  // below. They must not be stamped onto project pages (a FAQPage on a page
+  // whose visible content is not an FAQ is a structured-data mismatch).
+]
+
+,
+__dangerouslyDisableSanitizersByTagID: {
+  'ld-json': ['innerHTML']
+}
+
+})
+
+// ── Homepage-only structured data ─────────────────────────────────────────────
+// BreadcrumbList (site nav) and FAQPage belong on '/' only.
+const route = useRoute()
+useHead(() => (route.path !== '/' ? {} : {
+  script: [
   // 🧭 BREADCRUMB SCHEMA
   {
     type: 'application/ld+json',
@@ -273,7 +292,7 @@ __dangerouslyDisableSanitizersByTagID: {
   'ld-json': ['innerHTML']
 }
 
-})
+}))
 
 // Initialize theme
 const { initTheme, setupSystemWatcher } = useTheme()

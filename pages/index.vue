@@ -425,19 +425,46 @@ const projectStore = useProjectStore()
 const techStore = useTechnologyStore()
 const { getIconClass } = useTechnology()
 
-// SEO
-const useHeadData = () => {
-  useHead({
-    title: 'Full-Stack Developer Portfolio',
-    meta: [
-      { name: 'description', content: 'Full-stack web developer specializing in modern web technologies.' },
-      { name: 'keywords', content: 'full-stack web developer, web development, portfolio' },
-      { property: 'og:title', content: 'Full-Stack web Developer Portfolio' },
-      { property: 'og:description', content: 'Full-stack web developer specializing in modern web technologies.' },
-      { property: 'og:type', content: 'website' },
-    ]
-  })
-}
+// ── Data fetch (SSR) ──────────────────────────────────────────────────────────
+// Fetch at setup so owner + projects render into the server HTML. This is what
+// replaces the "Projects Coming Soon" empty state and the generic OG fallbacks.
+await useAsyncData('home', async () => {
+  await Promise.all([
+    ownerStore.fetchOwner(),
+    projectStore.fetchProjects(),
+    techStore.fetchCatalog(),
+  ])
+  return true
+})
+
+// ── SEO (rendered server-side) ────────────────────────────────────────────────
+// Real owner data when present; sensible defaults otherwise so the homepage
+// never ships "Developer Portfolio". Homepage owns its own canonical (app.vue
+// no longer sets a global one).
+const siteUrl = 'https://oseahumen-agboifoh-john.vercel.app'
+const homeTitle = computed(() =>
+  ownerStore.owner
+    ? `${ownerStore.owner.name} – ${ownerStore.owner.headline}`
+    : 'Oseahumen Agboifoh John – Full-stack Developer'
+)
+const homeDescription = computed(() =>
+  ownerStore.owner?.bio || 'Full-stack web developer (Laravel, FastAPI, Vue, React) based in Nigeria. I build clean, scalable web apps.'
+)
+
+useHead({
+  title: homeTitle,
+  link: [{ rel: 'canonical', href: siteUrl }],
+  meta: [
+    { name: 'description', content: homeDescription },
+    { property: 'og:title', content: homeTitle },
+    { property: 'og:description', content: homeDescription },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: siteUrl },
+    { property: 'og:image', content: () => ownerStore.owner?.avatar || `${siteUrl}/preview.jpg` },
+  ]
+})
+
+if (ownerStore.owner) usePersonJsonLd(ownerStore.owner)
 
 const featuredProjects = computed(() => projectStore.projects?.slice(0, 3) || [])
 
@@ -496,36 +523,19 @@ const handleImageError = (event, fallbackSrc) => {
   event.target.src = fallbackSrc
 }
 
-onMounted(async () => {
-  await Promise.all([
-    ownerStore.fetchOwner(),
-    projectStore.fetchProjects(),
-    techStore.fetchCatalog(),
-  ])
+// Client-only presentation: typewriter, tech carousel, stats reveal.
+// Data is already fetched at setup (SSR), so this just drives animation.
+onMounted(() => {
+  if (!ownerStore.owner) return
 
-  useHeadData()
+  startTypewriter()
+  startTechCycle()
 
-  if (ownerStore.owner) {
-    startTypewriter()
-    startTechCycle()
-
-    if (statsRef.value) {
-      const obs = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting) { statsVisible.value = true; obs.disconnect() }
-      }, { threshold: 0.3 })
-      obs.observe(statsRef.value)
-    }
-
-    usePersonJsonLd(ownerStore.owner)
-    useHead({
-      title: `${ownerStore.owner.name} - ${ownerStore.owner.headline}`,
-      meta: [
-        { name: 'description', content: ownerStore.owner.bio },
-        { property: 'og:title', content: `${ownerStore.owner.name} - ${ownerStore.owner.headline}` },
-        { property: 'og:description', content: ownerStore.owner.bio },
-        { property: 'og:image', content: ownerStore.owner.avatar },
-      ]
-    })
+  if (statsRef.value) {
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { statsVisible.value = true; obs.disconnect() }
+    }, { threshold: 0.3 })
+    obs.observe(statsRef.value)
   }
 })
 

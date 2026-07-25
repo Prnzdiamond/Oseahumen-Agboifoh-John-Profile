@@ -425,7 +425,7 @@ import { useTechnologyStore } from '~/stores/technologyStore'
 import { useTechnology } from '~/composables/useTechnology'
 import { useSocialIcon } from '~/composables/useSocialIcon'
 import { useAboutPageMeta } from '~/composables/usePageMeta'
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 
 const ownerStore = useOwnerStore()
 const techStore = useTechnologyStore()
@@ -477,10 +477,15 @@ const toggleHobbyDescription = (i) => {
   idx > -1 ? expandedHobbies.value.splice(idx, 1) : expandedHobbies.value.push(i)
 }
 
-onMounted(async () => {
+// Fetch at setup (SSR) so the about content and its meta render server-side.
+await useAsyncData('about', async () => {
   await Promise.all([ownerStore.fetchOwner(), techStore.fetchCatalog()])
-  if (ownerStore.owner) useAboutPageMeta(ownerStore.owner)
+  return true
 })
+
+// Always set page meta (canonical + description); enrich with owner bio/avatar
+// when available. Runs at setup so it wins over any inherited head.
+useAboutPageMeta(ownerStore.owner)
 </script>
 
 <style scoped>

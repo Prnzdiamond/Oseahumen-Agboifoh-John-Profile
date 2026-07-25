@@ -329,23 +329,35 @@ useHead(computed(() => ({
     ],
 })))
 
-onMounted(async () => {
-    const config = useRuntimeConfig()
+// Fetch at setup (SSR) so filter validity and results resolve server-side —
+// resolved depends on both catalogs being loaded.
+const config = useRuntimeConfig()
+await useAsyncData(`filter:${route.path}`, async () => {
     await Promise.all([
         projectStore.fetchProjects(),
         techStore.fetchCatalog(),
         filterStore.fetchMeta(config.public.apiBaseUrl),
     ])
+    return true
+})
 
-    // Save this filter to session so /projects will re-apply it
-    if (resolved.value.valid && resolved.value.label) {
+// A slug found in NEITHER catalog is a genuine 404. A valid slug with zero
+// results stays a 200 empty state — deliberate, see useProjectFilter.js:14-18.
+if (!resolved.value.valid) {
+    throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
+
+loading.value = false
+
+// Persist this filter to session so /projects re-applies it. Writes
+// localStorage — client-only, so keep it in onMounted.
+onMounted(() => {
+    if (resolved.value.label) {
         filterStore.setSessionFilter(
             resolved.value.techFilters,
             resolved.value.ctxFilters
         )
     }
-
-    loading.value = false
 })
 </script>
 

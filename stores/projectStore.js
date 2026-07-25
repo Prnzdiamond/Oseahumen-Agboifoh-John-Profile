@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { useRuntimeConfig } from "#app"
 import { $fetch } from "ofetch"
+import { withServerToken } from "~/utils/withServerToken"
 
 export const useProjectStore = defineStore("project", {
     state: () => ({
@@ -32,9 +33,7 @@ export const useProjectStore = defineStore("project", {
             try {
                 const config = useRuntimeConfig();
                 const response = await $fetch(`${config.public.apiBaseUrl}/projects`, {
-                    headers: {
-                        'Cache-Control': 'max-age=600' // 10 minutes
-                    }
+                    headers: withServerToken(config, { 'Cache-Control': 'max-age=600' }) // 10 minutes
                 });
 
                 if (response.success) {
@@ -64,9 +63,7 @@ export const useProjectStore = defineStore("project", {
             try {
                 const config = useRuntimeConfig();
                 const response = await $fetch(`${config.public.apiBaseUrl}/projects/${slug}`, {
-                    headers: {
-                        'Cache-Control': 'max-age=300' // 5 minutes
-                    }
+                    headers: withServerToken(config, { 'Cache-Control': 'max-age=300' }) // 5 minutes
                 });
 
                 if (response.success) {

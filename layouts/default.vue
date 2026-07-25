@@ -240,7 +240,7 @@
           <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
             <span class="flex items-center space-x-1">
               <div class="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-pulse flex-shrink-0"></div>
-              <span class="truncate">{{ getRandomTechStack() }}</span>
+              <span class="truncate">{{ footerTechLabel }}</span>
             </span>
           </div>
         </div>
@@ -318,12 +318,15 @@ watch(() => route.path, () => {
   mobileMenuOpen.value = false
 })
 
-// Fetch owner data when component is mounted
-onMounted(async () => {
+// Fetch owner + tech at setup (SSR) so the shared nav/footer — and pages that
+// rely only on the layout for owner data (e.g. contact) — render server-side.
+// useAsyncData dedupes with any per-page fetch of the same stores.
+await useAsyncData('layout-owner', async () => {
   await Promise.all([
     ownerStore.owner ? Promise.resolve() : ownerStore.fetchOwner(),
     techStore.fetchCatalog(),
   ])
+  return true
 })
 
 // Helper function to get initials from name
@@ -336,15 +339,16 @@ const getInitials = (name) => {
     .substring(0, 2)
 }
 
-// Helper function to get a random tech from the stack
-const getRandomTechStack = () => {
-  if (!owner.value?.tech_stack || owner.value.tech_stack.length === 0) {
-    return 'Modern Tech Stack'
-  }
-  
-  const randomTech = owner.value.tech_stack[Math.floor(Math.random() * owner.value.tech_stack.length)]
-  return `Built with ${randomTech.technology || randomTech.name || randomTech}`
-}
+// Footer "Built with X" label. Picked ONCE via useState (seeded on the server,
+// serialized to the client) so it stays identical across the SSR/hydration
+// boundary — a plain Math.random() in the template would mismatch now that the
+// layout renders server-side.
+const footerTechLabel = useState('footer-tech-label', () => {
+  const stack = owner.value?.tech_stack
+  if (!stack || stack.length === 0) return 'Modern Tech Stack'
+  const t = stack[Math.floor(Math.random() * stack.length)]
+  return `Built with ${t.technology || t.name || t}`
+})
 </script>
 
 <style scoped>

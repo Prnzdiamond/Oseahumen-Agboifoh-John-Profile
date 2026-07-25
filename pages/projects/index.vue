@@ -446,6 +446,7 @@ import { useProjectStore } from '~/stores/projectStore'
 import { useTechnologyStore } from '~/stores/technologyStore'
 import { useFilterStore } from '~/stores/filterStore'
 import { useTechnology } from '~/composables/useTechnology'
+import { useProjectsPageMeta } from '~/composables/usePageMeta'
 
 const route = useRoute()
 const router = useRouter()
@@ -654,17 +655,24 @@ const statusClass = (s) => ({
 // Also clear result cache when project store refreshes.
 watch(() => projectStore.lastFetched, () => filterStore.clearResultCache())
 
-useHead({ title: 'Projects - Portfolio' })
+// Per-page SEO (canonical + owner-branded title/description). Wires up the
+// previously-unused useProjectsPageMeta helper, replacing a bare title.
+useProjectsPageMeta()
 
-onMounted(async () => {
-  const config = useRuntimeConfig()
-
+// Fetch at setup (SSR) so the project grid renders into the server HTML.
+const config = useRuntimeConfig()
+await useAsyncData('projects-index', async () => {
   await Promise.all([
     projectStore.fetchProjects(),
     techStore.fetchCatalog(),
     filterStore.fetchMeta(config.public.apiBaseUrl),
   ])
+  return true
+})
 
+// Session-filter restore reads client-only state (localStorage-backed) — keep
+// it in onMounted. Data is already loaded above.
+onMounted(() => {
   // If the user explicitly clicked "View All" before navigating here,
   // respect that intent — skip the session restore entirely.
   // effectiveTechFilters/effectiveCtxFilters will return [] while isViewingAll=true,
